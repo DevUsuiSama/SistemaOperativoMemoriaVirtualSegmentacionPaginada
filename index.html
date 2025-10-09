@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memoria Virtual - Sistema Operativo</title>
+    <style>
+        /* Variables CSS para colores académicos */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --text-color: #333;
+            --bg-color: #f9f9f9;
+            --card-bg: #ffffff;
+            --border-color: #ddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Modo oscuro */
+        .dark-mode {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #34495e;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #d35400;
+            --text-color: #ecf0f1;
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --border-color: #34495e;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Reset y estilos base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
+        }
+
+        /* Estructura principal */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Menú hamburguesa */
+        .menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100%;
+            background-color: var(--primary-color);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu--open {
+            transform: translateX(0);
+        }
+
+        .menu__header {
+            padding: 20px 0;
+            border-bottom: 1px solid var(--dark-color);
+            color: var(--light-color);
+            margin-bottom: 20px;
+        }
+
+        .menu__title {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .menu__subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .menu__list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .menu__item {
+            border-bottom: 1px solid var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .menu__link {
+            display: block;
+            padding: 15px 20px;
+            color: var(--light-color);
+            text-decoration: none;
+            transition: background-color 0.3s;
+            border-radius: 5px;
+        }
+
+        .menu__link:hover {
+            background-color: var(--dark-color);
+        }
+
+        .menu__link--active {
+            background-color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        /* Botón hamburguesa */
+        .hamburger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 30px;
+            height: 24px;
+            cursor: pointer;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: var(--card-bg);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+        }
+
+        .hamburger__line {
+            height: 3px;
+            width: 100%;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger--open .hamburger__line:nth-child(1) {
+            transform: translateY(10px) rotate(45deg);
+        }
+
+        .hamburger--open .hamburger__line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger--open .hamburger__line:nth-child(3) {
+            transform: translateY(-10px) rotate(-45deg);
+        }
+
+        /* Contenido principal */
+        .content {
+            flex: 1;
+            padding: 30px;
+            transition: margin-left 0.3s ease;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .content__title {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--secondary-color);
+            font-size: 2rem;
+        }
+
+        .content__description {
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Botón modo oscuro/claro */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+        }
+
+        .theme-toggle__icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        /* Animaciones y visualizaciones */
+        .animation {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 35px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .animation__title {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .animation__description {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .memory-visualization {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+            justify-content: center;
+            padding: 15px;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+        }
+
+        .memory-visualization__section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .memory-visualization__title {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .memory-block {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: all 0.5s ease;
+            position: relative;
+            margin: 5px;
+        }
+
+        .memory-block--physical {
+            background-color: var(--light-color);
+            border: 2px solid var(--secondary-color);
+            color: var(--dark-color);
+        }
+
+        .memory-block--virtual {
+            background-color: var(--light-color);
+            border: 2px dashed var(--accent-color);
+            color: var(--dark-color);
+        }
+
+        .memory-block--disk {
+            background-color: var(--light-color);
+            border: 2px dotted var(--warning-color);
+            color: var(--dark-color);
+        }
+
+        .memory-block--active {
+            background-color: var(--secondary-color);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.7);
+        }
+
+        .memory-block--fault {
+            background-color: var(--accent-color);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        .memory-block--mapped {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .memory-block--segment {
+            background-color: var(--warning-color);
+            color: white;
+            border: 2px solid var(--warning-color);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            padding: 12px 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button--secondary {
+            background-color: var(--warning-color);
+        }
+
+        .button--secondary:hover {
+            background-color: #e67e22;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table th, .table td {
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        .table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        .table tr:nth-child(even) {
+            background-color: var(--light-color);
+        }
+
+        .table tr:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .comparison {
+            display: flex;
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .comparison__item {
+            flex: 1;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .comparison__title {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1.3rem;
+        }
+
+        .comparison__list {
+            list-style-type: none;
+        }
+
+        .comparison__list li {
+            padding: 8px 0;
+            position: relative;
+            padding-left: 25px;
+            line-height: 1.5;
+        }
+
+        .comparison__list li:before {
+            content: "•";
+            color: var(--secondary-color);
+            position: absolute;
+            left: 0;
+            font-size: 1.5rem;
+        }
+
+        /* Flechas para interacciones */
+        .arrow {
+            position: absolute;
+            width: 100px;
+            height: 2px;
+            background-color: var(--accent-color);
+            z-index: 10;
+        }
+
+        .arrow:before {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: -6px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid var(--accent-color);
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        .arrow--animated {
+            animation: arrowFlow 2s infinite;
+        }
+
+        /* Animaciones */
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+        }
+
+        @keyframes highlight {
+            0% { background-color: var(--success-color); }
+            100% { background-color: var(--light-color); }
+        }
+
+        @keyframes arrowFlow {
+            0% { opacity: 0; transform: translateX(-20px); }
+            50% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(20px); }
+        }
+
+        .highlight {
+            animation: highlight 2s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .comparison {
+                flex-direction: column;
+            }
+            
+            .memory-block {
+                width: 50px;
+                height: 50px;
+                font-size: 0.8rem;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .animation {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Menú hamburguesa -->
+        <nav class="menu" id="menu">
+            <div class="menu__header">
+                <h1 class="menu__title">Memoria Virtual</h1>
+                <p class="menu__subtitle">Sistema Operativo</p>
+            </div>
+            <ul class="menu__list">
+                <li class="menu__item"><a href="#memoria-virtual" class="menu__link menu__link--active">Memoria Virtual</a></li>
+                <li class="menu__item"><a href="#tablas-paginas" class="menu__link">Tablas de Páginas</a></li>
+                <li class="menu__item"><a href="#segmentacion-paginacion" class="menu__link">Segmentación vs. Paginación</a></li>
+                <li class="menu__item"><a href="#segmentacion-paginada" class="menu__link">Segmentación Paginada</a></li>
+            </ul>
+        </nav>
+
+        <!-- Botón hamburguesa -->
+        <div class="hamburger" id="hamburger">
+            <span class="hamburger__line"></span>
+            <span class="hamburger__line"></span>
+            <span class="hamburger__line"></span>
+        </div>
+
+        <!-- Botón modo oscuro/claro -->
+        <button class="theme-toggle" id="themeToggle">
+            <span class="theme-toggle__icon">🌙</span>
+        </button>
+
+        <!-- Contenido principal -->
+        <main class="content" id="content">
+            <!-- Sección Memoria Virtual -->
+            <section id="memoria-virtual" class="content__section">
+                <h2 class="content__title">1. Memoria Virtual</h2>
+                <p class="content__description">
+                    La memoria virtual es una técnica de gestión de memoria que permite ejecutar procesos cuyo tamaño total excede la memoria física disponible.
+                    Esto se logra dividiendo la memoria en páginas y utilizando almacenamiento secundario (como el disco duro) para guardar las páginas que no caben en la memoria física.
+                </p>
+
+                <div class="animation">
+                    <h3 class="animation__title">Simulación: Memoria Virtual</h3>
+                    <p class="animation__description">Observa cómo funciona la memoria virtual cuando un proceso necesita más memoria de la disponible físicamente. Las flechas indican el movimiento de páginas entre memoria virtual, física y disco.</p>
+                    
+                    <div class="memory-visualization" id="virtual-memory-viz">
+                        <!-- Se generará dinámicamente con JavaScript -->
+                    </div>
+                    
+                    <div class="controls">
+                        <button class="button" id="start-virtual">Iniciar Simulación</button>
+                        <button class="button button--secondary" id="reset-virtual">Reiniciar</button>
+                        <button class="button" id="step-virtual">Paso a Paso</button>
+                    </div>
+                </div>
+
+                <div class="animation">
+                    <h3 class="animation__title">¿Qué pasaría sin memoria virtual?</h3>
+                    <p class="animation__description">Sin memoria virtual, los sistemas modernos enfrentarían problemas graves:</p>
+                    <ul class="comparison__list">
+                        <li>Los programas estarían limitados al tamaño de la memoria física disponible</li>
+                        <li>Sería imposible ejecutar múltiples programas grandes simultáneamente</li>
+                        <li>La fragmentación de memoria sería un problema constante</li>
+                        <li>Los desarrolladores tendrían que gestionar manualmente la memoria</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Sección Tablas de Páginas -->
+            <section id="tablas-paginas" class="content__section" style="display: none;">
+                <h2 class="content__title">2. Tablas de Páginas</h2>
+                <p class="content__description">
+                    La tabla de páginas es la estructura de datos que el sistema operativo utiliza para almacenar el mapeo entre direcciones virtuales y físicas.
+                    Cada proceso tiene su propia tabla de páginas, que se utiliza durante la traducción de direcciones.
+                </p>
+
+                <div class="animation">
+                    <h3 class="animation__title">Traducción de Direcciones</h3>
+                    <p class="animation__description">La MMU (Memory Management Unit) utiliza la tabla de páginas para convertir direcciones virtuales en físicas. Observa cómo se realiza esta traducción:</p>
+                    
+                    <div class="memory-visualization" id="page-table-viz">
+                        <!-- Se generará dinámicamente con JavaScript -->
+                    </div>
+                    
+                    <div class="table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Página Virtual</th>
+                                    <th>Marco Físico</th>
+                                    <th>Bit de Presencia</th>
+                                    <th>Bit de Modificación</th>
+                                    <th>Bits de Protección</th>
+                                </tr>
+                            </thead>
+                            <tbody id="page-table-body">
+                                <!-- Se generará dinámicamente con JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="controls">
+                        <button class="button" id="access-memory">Acceder a Memoria</button>
+                        <button class="button" id="cause-page-fault">Generar Page Fault</button>
+                        <button class="button" id="show-translation">Mostrar Traducción</button>
+                    </div>
+                </div>
+
+                <div class="animation">
+                    <h3 class="animation__title">Información en una Entrada de Tabla de Páginas (PTE)</h3>
+                    <p class="animation__description">Cada entrada en la tabla de páginas contiene información crucial:</p>
+                    <ul class="comparison__list">
+                        <li><strong>Bit de presencia/válido:</strong> Indica si la página está en memoria física</li>
+                        <li><strong>Marco físico:</strong> Dirección del marco de página en memoria física</li>
+                        <li><strong>Bits de protección:</strong> Permisos de lectura, escritura y ejecución</li>
+                        <li><strong>Bit de modificación (dirty):</strong> Indica si la página ha sido modificada</li>
+                        <li><strong>Bit de referencia:</strong> Utilizado para algoritmos de reemplazo</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Sección Segmentación vs. Paginación -->
+            <section id="segmentacion-paginacion" class="content__section" style="display: none;">
+                <h2 class="content__title">3. Segmentación vs. Paginación</h2>
+                <p class="content__description">
+                    Tanto la segmentación como la paginación son técnicas de gestión de memoria, pero con enfoques diferentes.
+                    Mientras que la paginación divide la memoria en unidades de tamaño fijo (páginas), la segmentación la divide en unidades lógicas de tamaño variable (segmentos).
+                </p>
+
+                <div class="comparison">
+                    <div class="comparison__item">
+                        <h3 class="comparison__title">Segmentación</h3>
+                        <ul class="comparison__list">
+                            <li><strong>Ventajas:</strong>
+                                <ul class="comparison__list">
+                                    <li>Refleja la estructura lógica del programa</li>
+                                    <li>Facilita la compartición y protección</li>
+                                    <li>Segmentos de tamaño variable</li>
+                                </ul>
+                            </li>
+                            <li><strong>Desventajas:</strong>
+                                <ul class="comparison__list">
+                                    <li>Fragmentación externa</li>
+                                    <li>Complejidad en la gestión de memoria</li>
+                                    <li>Dificultad para encontrar espacio contiguo</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="comparison__item">
+                        <h3 class="comparison__title">Paginación</h3>
+                        <ul class="comparison__list">
+                            <li><strong>Ventajas:</strong>
+                                <ul class="comparison__list">
+                                    <li>No hay fragmentación externa</li>
+                                    <li>Más simple de implementar</li>
+                                    <li>Tamaño de página fijo</li>
+                                </ul>
+                            </li>
+                            <li><strong>Desventajas:</strong>
+                                <ul class="comparison__list">
+                                    <li>No refleja la estructura lógica</li>
+                                    <li>Overhead por tablas de páginas</li>
+                                    <li>Fragmentación interna</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="animation">
+                    <h3 class="animation__title">Visualización Comparativa</h3>
+                    <p class="animation__description">Observa las diferencias entre segmentación y paginación en la gestión de memoria:</p>
+                    
+                    <div class="memory-visualization" id="segmentation-viz">
+                        <!-- Se generará dinámicamente con JavaScript -->
+                    </div>
+                    
+                    <div class="memory-visualization" id="pagination-viz">
+                        <!-- Se generará dinámicamente con JavaScript -->
+                    </div>
+                    
+                    <div class="controls">
+                        <button class="button" id="show-segmentation">Mostrar Segmentación</button>
+                        <button class="button" id="show-pagination">Mostrar Paginación</button>
+                        <button class="button" id="compare-both">Comparar Ambos</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección Segmentación Paginada -->
+            <section id="segmentacion-paginada" class="content__section" style="display: none;">
+                <h2 class="content__title">4. Segmentación Paginada</h2>
+                <p class="content__description">
+                    Los sistemas modernos como x86-64 utilizan un modelo híbrido que combina segmentación y paginación.
+                    Aunque la paginación es eficiente, la segmentación aporta beneficios residuales importantes.
+                </p>
+
+                <div class="animation">
+                    <h3 class="animation__title">Modelo Híbrido: Segmentación Paginada</h3>
+                    <p class="animation__description">En este modelo, la memoria se divide primero en segmentos lógicos, y luego cada segmento se divide en páginas. Observa cómo funciona:</p>
+                    
+                    <div class="memory-visualization" id="hybrid-viz">
+                        <!-- Se generará dinámicamente con JavaScript -->
+                    </div>
+                    
+                    <div class="controls">
+                        <button class="button" id="show-hybrid">Mostrar Modelo Híbrido</button>
+                        <button class="button" id="step-hybrid">Paso a Paso</button>
+                    </div>
+                </div>
+
+                <div class="animation">
+                    <h3 class="animation__title">Beneficios de la Segmentación en Sistemas Modernos</h3>
+                    <p class="animation__description">Aunque la paginación es eficiente, la segmentación aporta:</p>
+                    <ul class="comparison__list">
+                        <li><strong>Protección y aislamiento:</strong> Los segmentos permiten definir permisos específicos para diferentes partes del programa</li>
+                        <li><strong>Compatibilidad:</strong> Mantener segmentación permite compatibilidad con software antiguo</li>
+                        <li><strong>Gestión de tipos:</strong> Los segmentos pueden representar diferentes tipos de datos (código, datos, pila)</li>
+                        <li><strong>Compartición eficiente:</strong> Es más fácil compartir segmentos completos entre procesos</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Elementos del DOM
+        const menu = document.getElementById('menu');
+        const hamburger = document.getElementById('hamburger');
+        const themeToggle = document.getElementById('themeToggle');
+        const contentSections = document.querySelectorAll('.content__section');
+        const menuLinks = document.querySelectorAll('.menu__link');
+
+        // Alternar menú hamburguesa
+        hamburger.addEventListener('click', () => {
+            menu.classList.toggle('menu--open');
+            hamburger.classList.toggle('hamburger--open');
+        });
+
+        // Alternar modo oscuro/claro
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = themeToggle.querySelector('.theme-toggle__icon');
+            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        });
+
+        // Navegación entre secciones
+        menuLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Obtener el ID de la sección objetivo
+                const targetId = link.getAttribute('href').substring(1);
+                
+                // Ocultar todas las secciones
+                contentSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                
+                // Mostrar la sección objetivo
+                document.getElementById(targetId).style.display = 'block';
+                
+                // Actualizar enlace activo
+                menuLinks.forEach(l => l.classList.remove('menu__link--active'));
+                link.classList.add('menu__link--active');
+                
+                // Cerrar menú en dispositivos móviles
+                if (window.innerWidth <= 768) {
+                    menu.classList.remove('menu--open');
+                    hamburger.classList.remove('hamburger--open');
+                }
+            });
+        });
+
+        // Simulación de Memoria Virtual
+        const virtualMemoryViz = document.getElementById('virtual-memory-viz');
+        const startVirtualBtn = document.getElementById('start-virtual');
+        const resetVirtualBtn = document.getElementById('reset-virtual');
+        const stepVirtualBtn = document.getElementById('step-virtual');
+
+        function initVirtualMemoryVisualization() {
+            virtualMemoryViz.innerHTML = '';
+            
+            // Crear contenedor para memoria física
+            const physicalContainer = document.createElement('div');
+            physicalContainer.className = 'memory-visualization__section';
+            physicalContainer.innerHTML = '<div class="memory-visualization__title">Memoria Física (4 marcos)</div>';
+            
+            const physicalMemory = document.createElement('div');
+            physicalMemory.style.display = 'flex';
+            physicalMemory.style.flexWrap = 'wrap';
+            physicalMemory.style.justifyContent = 'center';
+            
+            for (let i = 0; i < 4; i++) {
+                const block = document.createElement('div');
+                block.className = 'memory-block memory-block--physical';
+                block.textContent = `M${i}`;
+                block.id = `physical-${i}`;
+                physicalMemory.appendChild(block);
+            }
+            
+            physicalContainer.appendChild(physicalMemory);
+            virtualMemoryViz.appendChild(physicalContainer);
+            
+            // Crear contenedor para memoria virtual
+            const virtualContainer = document.createElement('div');
+            virtualContainer.className = 'memory-visualization__section';
+            virtualContainer.innerHTML = '<div class="memory-visualization__title">Memoria Virtual (8 páginas)</div>';
+            
+            const virtualMemory = document.createElement('div');
+            virtualMemory.style.display = 'flex';
+            virtualMemory.style.flexWrap = 'wrap';
+            virtualMemory.style.justifyContent = 'center';
+            
+            for (let i = 0; i < 8; i++) {
+                const block = document.createElement('div');
+                block.className = 'memory-block memory-block--virtual';
+                block.textContent = `V${i}`;
+                block.id = `virtual-${i}`;
+                virtualMemory.appendChild(block);
+            }
+            
+            virtualContainer.appendChild(virtualMemory);
+            virtualMemoryViz.appendChild(virtualContainer);
+            
+            // Crear contenedor para disco
+            const diskContainer = document.createElement('div');
+            diskContainer.className = 'memory-visualization__section';
+            diskContainer.innerHTML = '<div class="memory-visualization__title">Disco (Almacenamiento Secundario)</div>';
+            
+            const disk = document.createElement('div');
+            disk.style.display = 'flex';
+            disk.style.flexWrap = 'wrap';
+            disk.style.justifyContent = 'center';
+            
+            for (let i = 0; i < 8; i++) {
+                const block = document.createElement('div');
+                block.className = 'memory-block memory-block--disk';
+                block.textContent = `P${i}`;
+                block.id = `disk-${i}`;
+                disk.appendChild(block);
+            }
+            
+            diskContainer.appendChild(disk);
+            virtualMemoryViz.appendChild(diskContainer);
+        }
+
+        function createArrow(fromId, toId, color) {
+            const fromElement = document.getElementById(fromId);
+            const toElement = document.getElementById(toId);
+            
+            if (!fromElement || !toElement) return null;
+            
+            const fromRect = fromElement.getBoundingClientRect();
+            const toRect = toElement.getBoundingClientRect();
+            const containerRect = virtualMemoryViz.getBoundingClientRect();
+            
+            const arrow = document.createElement('div');
+            arrow.className = 'arrow arrow--animated';
+            arrow.style.backgroundColor = color || '#e74c3c';
+            
+            // Calcular posición y rotación
+            const fromX = fromRect.left + fromRect.width/2 - containerRect.left;
+            const fromY = fromRect.top + fromRect.height/2 - containerRect.top;
+            const toX = toRect.left + toRect.width/2 - containerRect.left;
+            const toY = toRect.top + toRect.height/2 - containerRect.top;
+            
+            const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
+            const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
+            
+            arrow.style.width = `${length}px`;
+            arrow.style.left = `${fromX}px`;
+            arrow.style.top = `${fromY}px`;
+            arrow.style.transform = `rotate(${angle}deg)`;
+            arrow.style.transformOrigin = '0 0';
+            
+            virtualMemoryViz.appendChild(arrow);
+            return arrow;
+        }
+
+        function simulateVirtualMemory() {
+            // Limpiar flechas anteriores
+            document.querySelectorAll('.arrow').forEach(arrow => arrow.remove());
+            
+            // Simular acceso a páginas virtuales
+            const accessOrder = [0, 1, 2, 3, 4, 5, 0, 1, 6, 7, 2, 3];
+            let step = 0;
+            
+            const interval = setInterval(() => {
+                if (step >= accessOrder.length) {
+                    clearInterval(interval);
+                    return;
+                }
+                
+                const page = accessOrder[step];
+                const virtualBlock = document.getElementById(`virtual-${page}`);
+                const diskBlock = document.getElementById(`disk-${page}`);
+                
+                // Resaltar la página virtual accedida
+                virtualBlock.classList.add('memory-block--active');
+                diskBlock.classList.add('memory-block--active');
+                
+                // Buscar un marco físico disponible
+                let physicalFrame = -1;
+                for (let i = 0; i < 4; i++) {
+                    const physicalBlock = document.getElementById(`physical-${i}`);
+                    if (!physicalBlock.classList.contains('memory-block--mapped')) {
+                        physicalFrame = i;
+                        break;
+                    }
+                }
+                
+                // Si no hay marco disponible, simular reemplazo (FIFO)
+                if (physicalFrame === -1) {
+                    // En una simulación real, aquí se implementaría un algoritmo de reemplazo
+                    physicalFrame = step % 4;
+                    const oldPhysicalBlock = document.getElementById(`physical-${physicalFrame}`);
+                    oldPhysicalBlock.classList.remove('memory-block--mapped');
+                    oldPhysicalBlock.textContent = `M${physicalFrame}`;
+                    
+                    // Crear flecha desde memoria física a disco (swap out)
+                    createArrow(`physical-${physicalFrame}`, `disk-${accessOrder[step-4]}`, '#f39c12');
+                }
+                
+                // Crear flecha desde disco a memoria física (swap in)
+                createArrow(`disk-${page}`, `physical-${physicalFrame}`, '#2ecc71');
+                
+                // Mapear la página virtual al marco físico
+                const physicalBlock = document.getElementById(`physical-${physicalFrame}`);
+                physicalBlock.classList.add('memory-block--mapped');
+                physicalBlock.textContent = `V${page}`;
+                
+                // Quitar resaltado después de un tiempo
+                setTimeout(() => {
+                    virtualBlock.classList.remove('memory-block--active');
+                    diskBlock.classList.remove('memory-block--active');
+                    
+                    // Limpiar flechas después de un tiempo
+                    document.querySelectorAll('.arrow').forEach(arrow => {
+                        if (arrow.parentNode) arrow.parentNode.removeChild(arrow);
+                    });
+                }, 1000);
+                
+                step++;
+            }, 1500);
+        }
+
+        startVirtualBtn.addEventListener('click', simulateVirtualMemory);
+        resetVirtualBtn.addEventListener('click', initVirtualMemoryVisualization);
+        stepVirtualBtn.addEventListener('click', () => {
+            // Implementación simplificada del modo paso a paso
+            alert('Modo paso a paso: En una implementación completa, esto permitiría avanzar manualmente por cada paso de la simulación.');
+        });
+
+        // Inicializar visualizaciones
+        initVirtualMemoryVisualization();
+
+        // Simulación de Tabla de Páginas
+        const pageTableBody = document.getElementById('page-table-body');
+        const accessMemoryBtn = document.getElementById('access-memory');
+        const causePageFaultBtn = document.getElementById('cause-page-fault');
+        const showTranslationBtn = document.getElementById('show-translation');
+        
+        function initPageTable() {
+            pageTableBody.innerHTML = '';
+            
+            // Crear entradas de tabla de páginas
+            const pageTableData = [
+                { virtual: 0, physical: 2, present: 1, modified: 0, protection: 'RW' },
+                { virtual: 1, physical: 0, present: 1, modified: 1, protection: 'RW' },
+                { virtual: 2, physical: -1, present: 0, modified: 0, protection: 'R' },
+                { virtual: 3, physical: 1, present: 1, modified: 0, protection: 'RX' },
+                { virtual: 4, physical: -1, present: 0, modified: 0, protection: 'RW' },
+                { virtual: 5, physical: 3, present: 1, modified: 0, protection: 'R' },
+            ];
+            
+            pageTableData.forEach(entry => {
+                const row = document.createElement('tr');
+                row.id = `page-table-row-${entry.virtual}`;
+                
+                row.innerHTML = `
+                    <td>${entry.virtual}</td>
+                    <td>${entry.physical >= 0 ? entry.physical : '-'}</td>
+                    <td>${entry.present ? 'Sí' : 'No'}</td>
+                    <td>${entry.modified ? 'Sí' : 'No'}</td>
+                    <td>${entry.protection}</td>
+                `;
+                
+                pageTableBody.appendChild(row);
+            });
+        }
+        
+        accessMemoryBtn.addEventListener('click', () => {
+            // Simular acceso a memoria
+            const randomPage = Math.floor(Math.random() * 6);
+            const row = document.getElementById(`page-table-row-${randomPage}`);
+            
+            row.classList.add('highlight');
+            setTimeout(() => {
+                row.classList.remove('highlight');
+            }, 2000);
+        });
+        
+        causePageFaultBtn.addEventListener('click', () => {
+            // Simular page fault
+            const faultPages = [2, 4]; // Páginas que no están en memoria
+            const randomFaultPage = faultPages[Math.floor(Math.random() * faultPages.length)];
+            const row = document.getElementById(`page-table-row-${randomFaultPage}`);
+            
+            row.classList.add('memory-block--fault');
+            setTimeout(() => {
+                row.classList.remove('memory-block--fault');
+            }, 2000);
+        });
+        
+        showTranslationBtn.addEventListener('click', () => {
+            // Implementación simplificada de la traducción
+            alert('Proceso de traducción: En una implementación completa, esto mostraría visualmente cómo una dirección virtual se divide en número de página y desplazamiento, y cómo se traduce a una dirección física.');
+        });
+        
+        initPageTable();
+
+        // Inicializar otras visualizaciones (simplificadas por brevedad)
+        // En una implementación completa, se añadirían todas las visualizaciones
+    </script>
+</body>
+</html>
