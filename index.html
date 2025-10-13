@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memoria Virtual - Sistema Operativo</title>
+    <title>Simulador Completo de Memoria Virtual</title>
     <style>
-        /* Variables CSS para colores académicos */
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
@@ -21,7 +21,6 @@
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        /* Modo oscuro */
         .dark-mode {
             --primary-color: #3498db;
             --secondary-color: #2980b9;
@@ -37,7 +36,6 @@
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
 
-        /* Reset y estilos base */
         * {
             margin: 0;
             padding: 0;
@@ -51,15 +49,14 @@
             color: var(--text-color);
             line-height: 1.6;
             padding: 0;
+            overflow-x: hidden;
         }
 
-        /* Estructura principal */
         .app {
             display: flex;
             min-height: 100vh;
         }
 
-        /* Menú hamburguesa */
         .menu {
             position: fixed;
             top: 0;
@@ -124,7 +121,6 @@
             font-weight: bold;
         }
 
-        /* Botón hamburguesa */
         .hamburger {
             position: fixed;
             top: 20px;
@@ -162,7 +158,6 @@
             transform: translateY(-10px) rotate(-45deg);
         }
 
-        /* Contenido principal */
         .content {
             flex: 1;
             padding: 30px;
@@ -189,7 +184,6 @@
             box-shadow: var(--shadow);
         }
 
-        /* Botón modo oscuro/claro */
         .theme-toggle {
             position: fixed;
             top: 20px;
@@ -212,7 +206,6 @@
             color: var(--primary-color);
         }
 
-        /* Animaciones y visualizaciones */
         .animation {
             background-color: var(--card-bg);
             border-radius: 10px;
@@ -234,6 +227,166 @@
         .animation__description {
             margin-bottom: 20px;
             line-height: 1.6;
+        }
+
+        .three-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 20px 0;
+            position: relative;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .three-controls {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            z-index: 100;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .three-info {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            max-width: 300px;
+            z-index: 100;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            padding: 12px 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button--secondary {
+            background-color: var(--warning-color);
+        }
+
+        .button--secondary:hover {
+            background-color: #e67e22;
+        }
+
+        .button--tertiary {
+            background-color: var(--success-color);
+        }
+
+        .button--tertiary:hover {
+            background-color: #27ae60;
+        }
+
+        .button--danger {
+            background-color: var(--accent-color);
+        }
+
+        .button--danger:hover {
+            background-color: #c0392b;
+        }
+
+        .button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .time-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: var(--light-color);
+            border-radius: 5px;
+        }
+
+        .time-controls label {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .time-controls input,
+        .time-controls select {
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        .simulation-status {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: var(--light-color);
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .simulation-status--running {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .simulation-status--paused {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .simulation-status--stopped {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .step-info {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: var(--light-color);
+            border-radius: 5px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .explanation-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
         }
 
         .memory-visualization {
@@ -309,48 +462,6 @@
             color: white;
         }
 
-        .memory-block--segment {
-            background-color: var(--warning-color);
-            color: white;
-            border: 2px solid var(--warning-color);
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-            flex-wrap: wrap;
-        }
-
-        .button {
-            padding: 12px 20px;
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-            font-weight: bold;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .button:hover {
-            background-color: var(--primary-color);
-            transform: translateY(-2px);
-        }
-
-        .button:active {
-            transform: translateY(0);
-        }
-
-        .button--secondary {
-            background-color: var(--warning-color);
-        }
-
-        .button--secondary:hover {
-            background-color: #e67e22;
-        }
-
         .table {
             width: 100%;
             border-collapse: collapse;
@@ -360,7 +471,8 @@
             overflow: hidden;
         }
 
-        .table th, .table td {
+        .table th,
+        .table td {
             border: 1px solid var(--border-color);
             padding: 12px 15px;
             text-align: center;
@@ -380,179 +492,792 @@
             background-color: rgba(52, 152, 219, 0.1);
         }
 
-        .comparison {
-            display: flex;
-            gap: 25px;
-            margin-top: 25px;
-        }
-
-        .comparison__item {
-            flex: 1;
-            padding: 20px;
-            border-radius: 10px;
-            background-color: var(--card-bg);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-        }
-
-        .comparison__title {
-            color: var(--primary-color);
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-            font-size: 1.3rem;
-        }
-
-        .comparison__list {
-            list-style-type: none;
-        }
-
-        .comparison__list li {
-            padding: 8px 0;
-            position: relative;
-            padding-left: 25px;
-            line-height: 1.5;
-        }
-
-        .comparison__list li:before {
-            content: "•";
-            color: var(--secondary-color);
-            position: absolute;
-            left: 0;
-            font-size: 1.5rem;
-        }
-
-        /* Flechas para interacciones */
-        .arrow {
-            position: absolute;
-            width: 100px;
-            height: 2px;
-            background-color: var(--accent-color);
-            z-index: 10;
-        }
-
-        .arrow:before {
-            content: '';
-            position: absolute;
-            right: -8px;
-            top: -6px;
-            width: 0;
-            height: 0;
-            border-left: 10px solid var(--accent-color);
-            border-top: 8px solid transparent;
-            border-bottom: 8px solid transparent;
-        }
-
-        .arrow--animated {
-            animation: arrowFlow 2s infinite;
-        }
-
-        /* Animaciones */
         @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(231, 76, 60, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(231, 76, 60, 0); }
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+            }
         }
 
-        @keyframes highlight {
-            0% { background-color: var(--success-color); }
-            100% { background-color: var(--light-color); }
-        }
-
-        @keyframes arrowFlow {
-            0% { opacity: 0; transform: translateX(-20px); }
-            50% { opacity: 1; }
-            100% { opacity: 0; transform: translateX(20px); }
-        }
-
-        .highlight {
-            animation: highlight 2s ease;
-        }
-
-        /* Responsive */
         @media (max-width: 768px) {
-            .comparison {
-                flex-direction: column;
-            }
-            
-            .memory-block {
-                width: 50px;
-                height: 50px;
-                font-size: 0.8rem;
-            }
-            
             .content {
                 padding: 20px 15px;
             }
-            
+
             .animation {
                 padding: 15px;
+            }
+
+            .three-container {
+                height: 300px;
+            }
+
+            .three-controls {
+                position: static;
+                margin-top: 10px;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="app">
-        <!-- Menú hamburguesa -->
         <nav class="menu" id="menu">
             <div class="menu__header">
                 <h1 class="menu__title">Memoria Virtual</h1>
-                <p class="menu__subtitle">Sistema Operativo</p>
+                <p class="menu__subtitle">Simulador Completo</p>
             </div>
             <ul class="menu__list">
-                <li class="menu__item"><a href="#memoria-virtual" class="menu__link menu__link--active">Memoria Virtual</a></li>
+                <li class="menu__item"><a href="#memoria-virtual" class="menu__link menu__link--active">Memoria
+                        Virtual</a></li>
                 <li class="menu__item"><a href="#tablas-paginas" class="menu__link">Tablas de Páginas</a></li>
-                <li class="menu__item"><a href="#segmentacion-paginacion" class="menu__link">Segmentación vs. Paginación</a></li>
-                <li class="menu__item"><a href="#segmentacion-paginada" class="menu__link">Segmentación Paginada</a></li>
+                <li class="menu__item"><a href="#segmentacion-paginacion" class="menu__link">Segmentación vs.
+                        Paginación</a></li>
+                <li class="menu__item"><a href="#segmentacion-paginada" class="menu__link">Segmentación Paginada</a>
+                </li>
             </ul>
         </nav>
 
-        <!-- Botón hamburguesa -->
         <div class="hamburger" id="hamburger">
             <span class="hamburger__line"></span>
             <span class="hamburger__line"></span>
             <span class="hamburger__line"></span>
         </div>
 
-        <!-- Botón modo oscuro/claro -->
         <button class="theme-toggle" id="themeToggle">
             <span class="theme-toggle__icon">🌙</span>
         </button>
 
-        <!-- Contenido principal -->
         <main class="content" id="content">
             <!-- Sección Memoria Virtual -->
             <section id="memoria-virtual" class="content__section">
+                <h2 class="content__title">En desarrollo - Falta Presupuesto</h2>
+
                 <h2 class="content__title">1. Memoria Virtual</h2>
                 <p class="content__description">
-                    La memoria virtual es una técnica de gestión de memoria que permite ejecutar procesos cuyo tamaño total excede la memoria física disponible.
-                    Esto se logra dividiendo la memoria en páginas y utilizando almacenamiento secundario (como el disco duro) para guardar las páginas que no caben en la memoria física.
+                    La memoria virtual es una técnica que permite ejecutar procesos cuyo tamaño excede la memoria física
+                    disponible,
+                    utilizando almacenamiento secundario para guardar las páginas que no caben en memoria RAM.
                 </p>
 
-                <div class="animation">
-                    <h3 class="animation__title">Simulación: Memoria Virtual</h3>
-                    <p class="animation__description">Observa cómo funciona la memoria virtual cuando un proceso necesita más memoria de la disponible físicamente. Las flechas indican el movimiento de páginas entre memoria virtual, física y disco.</p>
-                    
-                    <div class="memory-visualization" id="virtual-memory-viz">
-                        <!-- Se generará dinámicamente con JavaScript -->
-                    </div>
-                    
-                    <div class="controls">
-                        <button class="button" id="start-virtual">Iniciar Simulación</button>
-                        <button class="button button--secondary" id="reset-virtual">Reiniciar</button>
-                        <button class="button" id="step-virtual">Paso a Paso</button>
-                    </div>
-                </div>
+                <svg version="1.0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                    viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve" style="height: 500px;display: grid;width: 100%;justify-content: center;">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+                        width="100" height="100" viewBox="0 0 2000 2000" x="0" y="0" shape-rendering="crispEdges">
+                        <defs></defs>
+                        <rect x="0" y="0" width="2000" height="2000" fill="#ffffff"></rect>
+                        <rect x="563" y="149" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="149" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="149" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="149" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="149" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="149" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="149" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="149" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="195" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="241" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="287" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="287" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="287" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="287" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="287" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="287" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="287" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="287" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="333" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="333" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="333" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="333" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="333" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="333" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="333" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="333" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="333" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="333" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="333" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="379" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="425" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="425" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="425" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="425" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="425" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="425" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="425" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="425" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="425" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="425" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="425" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="471" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="471" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="471" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="471" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="471" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="471" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="471" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="471" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="471" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="471" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="195" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="425" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="471" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="517" width="46" height="46" fill="#000000"></rect>
+                        <rect x="379" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="471" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="563" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="195" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="425" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="609" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="379" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="471" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="655" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="425" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="701" width="46" height="46" fill="#000000"></rect>
+                        <rect x="195" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="747" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="425" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="471" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="793" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="471" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="839" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="195" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="379" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="425" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="885" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="379" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="471" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="931" width="46" height="46" fill="#000000"></rect>
+                        <rect x="195" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="425" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="977" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="379" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="471" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="1023" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="195" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="379" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="425" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1069" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="195" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="379" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="471" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1115" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="195" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="425" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="471" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="1161" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="195" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="379" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="1207" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="425" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1253" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="195" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="379" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1299" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="379" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="425" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1345" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="379" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="471" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1391" width="46" height="46" fill="#000000"></rect>
+                        <rect x="149" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="241" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="287" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="333" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="425" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="471" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1437" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1483" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1529" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="747" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="1575" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="1621" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="1667" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="1667" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="1667" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="1667" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1253" y="1667" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="1667" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1437" y="1667" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1667" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="1667" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1667" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="701" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1299" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1713" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="563" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="609" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="793" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="931" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1023" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1207" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1391" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1529" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1621" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="1759" width="46" height="46" fill="#000000"></rect>
+                        <rect x="517" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="655" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="839" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="885" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="977" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1069" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1115" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1161" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1345" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1483" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1575" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1667" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1713" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1759" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <rect x="1805" y="1805" width="46" height="46" fill="#000000"></rect>
+                        <svg version="1.1"
+                            id="Ebene_1" x="149" y="149" width="322" height="322" viewBox="0 0 699.988 699.986"
+                            enable-background="new 0 0 699.988 699.986" xml:space="preserve" shape-rendering="auto">
+                            <path fill="#000000"
+                                d="M600.99,0h-100h-99.997h-0.001h-99.997h-99.998h-99.998H1v99.998v99.998v99.998v99.999v99.997v99.998v99.998  h99.999h99.998h99.998h99.997h0.001h99.997h100h99.998v-99.998V499.99v-99.997v-99.999v-99.998V99.998V0H600.99z M600.99,199.996  v99.998v99.999v99.997v99.998h-100h-99.997h-0.001h-99.997h-99.998h-99.998V499.99v-99.997v-99.999v-99.998V99.998h99.998h99.998  h99.997h0.001h99.997h100V199.996z">
+                            </path>
+                        </svg>
+                        <svg version="1.0" id="Ebene_1" x="149" y="149" width="322" height="322"
+                            viewBox="0 0 699.988 699.988" enable-background="new 0 0 699.988 699.988"
+                            xml:space="preserve" shape-rendering="auto">
+                            <polygon fill="#000000"
+                                points="399.994,199.997 399.992,199.997 299.996,199.997 199.998,199.997 199.998,299.994 199.998,399.994   199.998,499.991 299.996,499.991 399.992,499.991 399.994,499.991 499.99,499.991 499.99,399.994 499.99,299.994 499.99,199.997 ">
+                            </polygon>
+                        </svg>
+                        <svg version="1.1" id="Ebene_1" x="1529" y="149" width="322" height="322"
+                            viewBox="0 0 699.988 699.986" enable-background="new 0 0 699.988 699.986"
+                            xml:space="preserve" shape-rendering="auto">
+                            <path fill="#000000"
+                                d="M600.99,0h-100h-99.997h-0.001h-99.997h-99.998h-99.998H1v99.998v99.998v99.998v99.999v99.997v99.998v99.998  h99.999h99.998h99.998h99.997h0.001h99.997h100h99.998v-99.998V499.99v-99.997v-99.999v-99.998V99.998V0H600.99z M600.99,199.996  v99.998v99.999v99.997v99.998h-100h-99.997h-0.001h-99.997h-99.998h-99.998V499.99v-99.997v-99.999v-99.998V99.998h99.998h99.998  h99.997h0.001h99.997h100V199.996z">
+                            </path>
+                        </svg>
+                        <svg version="1.0" id="Ebene_1" x="1529" y="149" width="322" height="322"
+                            viewBox="0 0 699.988 699.988" enable-background="new 0 0 699.988 699.988"
+                            xml:space="preserve" shape-rendering="auto">
+                            <polygon fill="#000000"
+                                points="399.994,199.997 399.992,199.997 299.996,199.997 199.998,199.997 199.998,299.994 199.998,399.994   199.998,499.991 299.996,499.991 399.992,499.991 399.994,499.991 499.99,499.991 499.99,399.994 499.99,299.994 499.99,199.997 ">
+                            </polygon>
+                        </svg>
+                        <svg version="1.1" id="Ebene_1" x="149" y="1529" width="322" height="322"
+                            viewBox="0 0 699.988 699.986" enable-background="new 0 0 699.988 699.986"
+                            xml:space="preserve" shape-rendering="auto">
+                            <path fill="#000000"
+                                d="M600.99,0h-100h-99.997h-0.001h-99.997h-99.998h-99.998H1v99.998v99.998v99.998v99.999v99.997v99.998v99.998  h99.999h99.998h99.998h99.997h0.001h99.997h100h99.998v-99.998V499.99v-99.997v-99.999v-99.998V99.998V0H600.99z M600.99,199.996  v99.998v99.999v99.997v99.998h-100h-99.997h-0.001h-99.997h-99.998h-99.998V499.99v-99.997v-99.999v-99.998V99.998h99.998h99.998  h99.997h0.001h99.997h100V199.996z">
+                            </path>
+                        </svg>
+                        <svg version="1.0" id="Ebene_1" x="149" y="1529" width="322" height="322"
+                            viewBox="0 0 699.988 699.988" enable-background="new 0 0 699.988 699.988"
+                            xml:space="preserve" shape-rendering="auto">
+                            <polygon fill="#000000"
+                                points="399.994,199.997 399.992,199.997 299.996,199.997 199.998,199.997 199.998,299.994 199.998,399.994   199.998,499.991 299.996,499.991 399.992,499.991 399.994,499.991 499.99,499.991 499.99,399.994 499.99,299.994 499.99,199.997 ">
+                            </polygon>
+                        </svg>
+                    </svg>
+
+                </svg>
 
                 <div class="animation">
-                    <h3 class="animation__title">¿Qué pasaría sin memoria virtual?</h3>
-                    <p class="animation__description">Sin memoria virtual, los sistemas modernos enfrentarían problemas graves:</p>
-                    <ul class="comparison__list">
-                        <li>Los programas estarían limitados al tamaño de la memoria física disponible</li>
-                        <li>Sería imposible ejecutar múltiples programas grandes simultáneamente</li>
-                        <li>La fragmentación de memoria sería un problema constante</li>
-                        <li>Los desarrolladores tendrían que gestionar manualmente la memoria</li>
-                    </ul>
+                    <h3 class="animation__title">Simulación 3D: Memoria Virtual</h3>
+                    <p class="animation__description">
+                        Observa cómo las páginas se mueven entre memoria física, virtual y disco.
+                        Cada color representa un estado diferente de la página.
+                    </p>
+
+                    <div class="three-container" id="virtual-memory-3d">
+                        <div class="three-controls">
+                            <button class="button" id="start-virtual-3d">Iniciar Simulación</button>
+                            <button class="button button--secondary" id="pause-virtual-3d">Pausar</button>
+                            <button class="button button--danger" id="reset-virtual-3d">Reiniciar</button>
+                            <button class="button button--tertiary" id="step-virtual-3d">Paso Siguiente</button>
+                        </div>
+                        <div class="three-info">
+                            Usa el ratón para rotar y la rueda para hacer zoom. Los colores: Azul=Memoria Física,
+                            Rojo=Memoria Virtual, Amarillo=Disco
+                        </div>
+                    </div>
+
+                    <div class="time-controls">
+                        <label for="speed-virtual-3d">Velocidad (ms):</label>
+                        <input type="number" id="speed-virtual-3d" min="500" max="5000" value="1500" step="100">
+                        <label for="algorithm-virtual-3d">Algoritmo:</label>
+                        <select id="algorithm-virtual-3d">
+                            <option value="fifo">FIFO</option>
+                            <option value="lru">LRU</option>
+                            <option value="optimal">Óptimo</option>
+                        </select>
+                    </div>
+
+                    <div class="simulation-status" id="status-virtual-3d">Estado: Detenido</div>
+                    <div class="step-info" id="step-info-virtual-3d">
+                        <strong>Paso actual:</strong> 0/12<br>
+                        <strong>Accediendo a página:</strong> -<br>
+                        <strong>Page faults:</strong> 0<br>
+                        <strong>Páginas en memoria:</strong> 0/4
+                    </div>
+
+                    <div class="explanation-panel" id="explanation-virtual-3d">
+                        <div class="explanation-title">Explicación del Proceso:</div>
+                        <p>La memoria virtual permite que los programas utilicen más memoria de la físicamente
+                            disponible. Cuando se accede a una página que no está en memoria física, ocurre un
+                            <strong>page fault</strong> y el sistema debe traer la página desde el disco, reemplazando
+                            otra si es necesario.</p>
+                    </div>
                 </div>
             </section>
 
@@ -560,52 +1285,65 @@
             <section id="tablas-paginas" class="content__section" style="display: none;">
                 <h2 class="content__title">2. Tablas de Páginas</h2>
                 <p class="content__description">
-                    La tabla de páginas es la estructura de datos que el sistema operativo utiliza para almacenar el mapeo entre direcciones virtuales y físicas.
-                    Cada proceso tiene su propia tabla de páginas, que se utiliza durante la traducción de direcciones.
+                    La tabla de páginas es la estructura que mapea direcciones virtuales a físicas.
+                    Cada proceso tiene su propia tabla de páginas gestionada por el sistema operativo.
                 </p>
 
                 <div class="animation">
-                    <h3 class="animation__title">Traducción de Direcciones</h3>
-                    <p class="animation__description">La MMU (Memory Management Unit) utiliza la tabla de páginas para convertir direcciones virtuales en físicas. Observa cómo se realiza esta traducción:</p>
-                    
-                    <div class="memory-visualization" id="page-table-viz">
-                        <!-- Se generará dinámicamente con JavaScript -->
+                    <h3 class="animation__title">Simulación 3D: Tabla de Páginas</h3>
+                    <p class="animation__description">
+                        Visualiza la estructura de la tabla de páginas y cómo se realiza la traducción de direcciones.
+                    </p>
+
+                    <div class="three-container" id="page-table-3d">
+                        <div class="three-controls">
+                            <button class="button" id="start-page-table-3d">Iniciar Simulación</button>
+                            <button class="button button--secondary" id="pause-page-table-3d">Pausar</button>
+                            <button class="button button--danger" id="reset-page-table-3d">Reiniciar</button>
+                            <button class="button button--tertiary" id="step-page-table-3d">Paso Siguiente</button>
+                        </div>
+                        <div class="three-info">
+                            Observa cómo se realiza la traducción de direcciones virtuales a físicas.
+                        </div>
                     </div>
-                    
+
+                    <div class="time-controls">
+                        <label for="speed-page-table-3d">Velocidad (ms):</label>
+                        <input type="number" id="speed-page-table-3d" min="500" max="5000" value="2000" step="100">
+                    </div>
+
+                    <div class="simulation-status" id="status-page-table-3d">Estado: Detenido</div>
+                    <div class="step-info" id="step-info-page-table-3d">
+                        <strong>Paso actual:</strong> 0/8<br>
+                        <strong>Dirección virtual:</strong> -<br>
+                        <strong>Página:</strong> - | <strong>Desplazamiento:</strong> -<br>
+                        <strong>Dirección física:</strong> -
+                    </div>
+
+                    <div class="explanation-panel" id="explanation-page-table-3d">
+                        <div class="explanation-title">Proceso de Traducción:</div>
+                        <p>1. La dirección virtual se divide en número de página y desplazamiento<br>
+                            2. Se consulta la tabla de páginas para obtener el marco físico<br>
+                            3. Si la página no está en memoria (bit de presencia=0), ocurre un page fault<br>
+                            4. El marco físico se combina con el desplazamiento para obtener la dirección física</p>
+                    </div>
+
                     <div class="table">
                         <table>
                             <thead>
                                 <tr>
                                     <th>Página Virtual</th>
                                     <th>Marco Físico</th>
-                                    <th>Bit de Presencia</th>
-                                    <th>Bit de Modificación</th>
-                                    <th>Bits de Protección</th>
+                                    <th>Presente</th>
+                                    <th>Modificado</th>
+                                    <th>Referenciado</th>
+                                    <th>Protección</th>
                                 </tr>
                             </thead>
                             <tbody id="page-table-body">
-                                <!-- Se generará dinámicamente con JavaScript -->
                             </tbody>
                         </table>
                     </div>
-                    
-                    <div class="controls">
-                        <button class="button" id="access-memory">Acceder a Memoria</button>
-                        <button class="button" id="cause-page-fault">Generar Page Fault</button>
-                        <button class="button" id="show-translation">Mostrar Traducción</button>
-                    </div>
-                </div>
-
-                <div class="animation">
-                    <h3 class="animation__title">Información en una Entrada de Tabla de Páginas (PTE)</h3>
-                    <p class="animation__description">Cada entrada en la tabla de páginas contiene información crucial:</p>
-                    <ul class="comparison__list">
-                        <li><strong>Bit de presencia/válido:</strong> Indica si la página está en memoria física</li>
-                        <li><strong>Marco físico:</strong> Dirección del marco de página en memoria física</li>
-                        <li><strong>Bits de protección:</strong> Permisos de lectura, escritura y ejecución</li>
-                        <li><strong>Bit de modificación (dirty):</strong> Indica si la página ha sido modificada</li>
-                        <li><strong>Bit de referencia:</strong> Utilizado para algoritmos de reemplazo</li>
-                    </ul>
                 </div>
             </section>
 
@@ -613,68 +1351,49 @@
             <section id="segmentacion-paginacion" class="content__section" style="display: none;">
                 <h2 class="content__title">3. Segmentación vs. Paginación</h2>
                 <p class="content__description">
-                    Tanto la segmentación como la paginación son técnicas de gestión de memoria, pero con enfoques diferentes.
-                    Mientras que la paginación divide la memoria en unidades de tamaño fijo (páginas), la segmentación la divide en unidades lógicas de tamaño variable (segmentos).
+                    Dos enfoques diferentes para la gestión de memoria: paginación (tamaño fijo) vs segmentación (tamaño
+                    variable).
                 </p>
 
-                <div class="comparison">
-                    <div class="comparison__item">
-                        <h3 class="comparison__title">Segmentación</h3>
-                        <ul class="comparison__list">
-                            <li><strong>Ventajas:</strong>
-                                <ul class="comparison__list">
-                                    <li>Refleja la estructura lógica del programa</li>
-                                    <li>Facilita la compartición y protección</li>
-                                    <li>Segmentos de tamaño variable</li>
-                                </ul>
-                            </li>
-                            <li><strong>Desventajas:</strong>
-                                <ul class="comparison__list">
-                                    <li>Fragmentación externa</li>
-                                    <li>Complejidad en la gestión de memoria</li>
-                                    <li>Dificultad para encontrar espacio contiguo</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <div class="comparison__item">
-                        <h3 class="comparison__title">Paginación</h3>
-                        <ul class="comparison__list">
-                            <li><strong>Ventajas:</strong>
-                                <ul class="comparison__list">
-                                    <li>No hay fragmentación externa</li>
-                                    <li>Más simple de implementar</li>
-                                    <li>Tamaño de página fijo</li>
-                                </ul>
-                            </li>
-                            <li><strong>Desventajas:</strong>
-                                <ul class="comparison__list">
-                                    <li>No refleja la estructura lógica</li>
-                                    <li>Overhead por tablas de páginas</li>
-                                    <li>Fragmentación interna</li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
                 <div class="animation">
-                    <h3 class="animation__title">Visualización Comparativa</h3>
-                    <p class="animation__description">Observa las diferencias entre segmentación y paginación en la gestión de memoria:</p>
-                    
-                    <div class="memory-visualization" id="segmentation-viz">
-                        <!-- Se generará dinámicamente con JavaScript -->
+                    <h3 class="animation__title">Simulación 3D: Comparativa</h3>
+                    <p class="animation__description">
+                        Compara visualmente ambos sistemas y observa sus ventajas y desventajas.
+                    </p>
+
+                    <div class="three-container" id="comparison-3d">
+                        <div class="three-controls">
+                            <button class="button" id="start-comparison-3d">Iniciar Simulación</button>
+                            <button class="button" id="show-segmentation-3d">Solo Segmentación</button>
+                            <button class="button" id="show-pagination-3d">Solo Paginación</button>
+                            <button class="button button--secondary" id="pause-comparison-3d">Pausar</button>
+                            <button class="button button--danger" id="reset-comparison-3d">Reiniciar</button>
+                        </div>
+                        <div class="three-info">
+                            Observa la fragmentación en segmentación y el uso uniforme en paginación.
+                        </div>
                     </div>
-                    
-                    <div class="memory-visualization" id="pagination-viz">
-                        <!-- Se generará dinámicamente con JavaScript -->
+
+                    <div class="time-controls">
+                        <label for="speed-comparison-3d">Velocidad (ms):</label>
+                        <input type="number" id="speed-comparison-3d" min="500" max="5000" value="2500" step="100">
                     </div>
-                    
-                    <div class="controls">
-                        <button class="button" id="show-segmentation">Mostrar Segmentación</button>
-                        <button class="button" id="show-pagination">Mostrar Paginación</button>
-                        <button class="button" id="compare-both">Comparar Ambos</button>
+
+                    <div class="simulation-status" id="status-comparison-3d">Estado: Detenido</div>
+                    <div class="step-info" id="step-info-comparison-3d">
+                        <strong>Paso actual:</strong> 0/10<br>
+                        <strong>Modo:</strong> Comparación<br>
+                        <strong>Fragmentación externa (Segmentación):</strong> 0%<br>
+                        <strong>Fragmentación interna (Paginación):</strong> 0%
+                    </div>
+
+                    <div class="explanation-panel" id="explanation-comparison-3d">
+                        <div class="explanation-title">Diferencias Clave:</div>
+                        <p><strong>Segmentación:</strong> Unidades lógicas de tamaño variable, refleja la estructura del
+                            programa, sufre de fragmentación externa.<br>
+                            <strong>Paginación:</strong> Unidades físicas de tamaño fijo, transparente al programador,
+                            sufre de fragmentación interna.
+                        </p>
                     </div>
                 </div>
             </section>
@@ -683,337 +1402,1197 @@
             <section id="segmentacion-paginada" class="content__section" style="display: none;">
                 <h2 class="content__title">4. Segmentación Paginada</h2>
                 <p class="content__description">
-                    Los sistemas modernos como x86-64 utilizan un modelo híbrido que combina segmentación y paginación.
-                    Aunque la paginación es eficiente, la segmentación aporta beneficios residuales importantes.
+                    Modelo híbrido utilizado en sistemas modernos que combina los beneficios de ambos enfoques.
                 </p>
 
                 <div class="animation">
-                    <h3 class="animation__title">Modelo Híbrido: Segmentación Paginada</h3>
-                    <p class="animation__description">En este modelo, la memoria se divide primero en segmentos lógicos, y luego cada segmento se divide en páginas. Observa cómo funciona:</p>
-                    
-                    <div class="memory-visualization" id="hybrid-viz">
-                        <!-- Se generará dinámicamente con JavaScript -->
-                    </div>
-                    
-                    <div class="controls">
-                        <button class="button" id="show-hybrid">Mostrar Modelo Híbrido</button>
-                        <button class="button" id="step-hybrid">Paso a Paso</button>
-                    </div>
-                </div>
+                    <h3 class="animation__title">Simulación 3D: Modelo Híbrido</h3>
+                    <p class="animation__description">
+                        Observa cómo los segmentos lógicos se dividen en páginas físicas.
+                    </p>
 
-                <div class="animation">
-                    <h3 class="animation__title">Beneficios de la Segmentación en Sistemas Modernos</h3>
-                    <p class="animation__description">Aunque la paginación es eficiente, la segmentación aporta:</p>
-                    <ul class="comparison__list">
-                        <li><strong>Protección y aislamiento:</strong> Los segmentos permiten definir permisos específicos para diferentes partes del programa</li>
-                        <li><strong>Compatibilidad:</strong> Mantener segmentación permite compatibilidad con software antiguo</li>
-                        <li><strong>Gestión de tipos:</strong> Los segmentos pueden representar diferentes tipos de datos (código, datos, pila)</li>
-                        <li><strong>Compartición eficiente:</strong> Es más fácil compartir segmentos completos entre procesos</li>
-                    </ul>
+                    <div class="three-container" id="hybrid-3d">
+                        <div class="three-controls">
+                            <button class="button" id="start-hybrid-3d">Iniciar Simulación</button>
+                            <button class="button button--tertiary" id="step-hybrid-3d">Paso Siguiente</button>
+                            <button class="button button--secondary" id="pause-hybrid-3d">Pausar</button>
+                            <button class="button button--danger" id="reset-hybrid-3d">Reiniciar</button>
+                        </div>
+                        <div class="three-info">
+                            Los segmentos (código, datos, pila) se dividen en páginas para almacenamiento físico.
+                        </div>
+                    </div>
+
+                    <div class="time-controls">
+                        <label for="speed-hybrid-3d">Velocidad (ms):</label>
+                        <input type="number" id="speed-hybrid-3d" min="500" max="5000" value="2000" step="100">
+                    </div>
+
+                    <div class="simulation-status" id="status-hybrid-3d">Estado: Detenido</div>
+                    <div class="step-info" id="step-info-hybrid-3d">
+                        <strong>Paso actual:</strong> 0/6<br>
+                        <strong>Mostrando:</strong> Estructura del proceso<br>
+                        <strong>Segmentos activos:</strong> 0/3<br>
+                        <strong>Páginas asignadas:</strong> 0
+                    </div>
+
+                    <div class="explanation-panel" id="explanation-hybrid-3d">
+                        <div class="explanation-title">Ventajas del Modelo Híbrido:</div>
+                        <p>• <strong>Protección:</strong> Cada segmento tiene permisos específicos<br>
+                            • <strong>Eficiencia:</strong> No hay fragmentación externa<br>
+                            • <strong>Organización lógica:</strong> Los programas se dividen en segmentos con
+                            significado<br>
+                            • <strong>Compartición:</strong> Es fácil compartir segmentos entre procesos</p>
+                    </div>
                 </div>
             </section>
         </main>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+
     <script>
-        // Elementos del DOM
+        // ========== CONFIGURACIÓN GENERAL ==========
         const menu = document.getElementById('menu');
         const hamburger = document.getElementById('hamburger');
         const themeToggle = document.getElementById('themeToggle');
         const contentSections = document.querySelectorAll('.content__section');
         const menuLinks = document.querySelectorAll('.menu__link');
 
-        // Alternar menú hamburguesa
+        // Estados de simulación
+        const simulationState = {
+            virtualMemory: {
+                running: false,
+                paused: false,
+                currentStep: 0,
+                totalSteps: 12,
+                intervalId: null,
+                speed: 1500,
+                algorithm: 'fifo',
+                pageFaults: 0,
+                memoryUsage: 0
+            },
+            pageTable: {
+                running: false,
+                paused: false,
+                currentStep: 0,
+                totalSteps: 8,
+                intervalId: null,
+                speed: 2000
+            },
+            comparison: {
+                running: false,
+                paused: false,
+                currentStep: 0,
+                totalSteps: 10,
+                intervalId: null,
+                speed: 2500,
+                mode: 'comparison'
+            },
+            hybrid: {
+                running: false,
+                paused: false,
+                currentStep: 0,
+                totalSteps: 6,
+                intervalId: null,
+                speed: 2000
+            }
+        };
+
+        // ========== CONFIGURACIÓN DE INTERFAZ ==========
         hamburger.addEventListener('click', () => {
             menu.classList.toggle('menu--open');
             hamburger.classList.toggle('hamburger--open');
         });
 
-        // Alternar modo oscuro/claro
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             const icon = themeToggle.querySelector('.theme-toggle__icon');
-            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            if (icon) {
+                icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+            }
         });
 
-        // Navegación entre secciones
         menuLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                
-                // Obtener el ID de la sección objetivo
                 const targetId = link.getAttribute('href').substring(1);
-                
-                // Ocultar todas las secciones
+
                 contentSections.forEach(section => {
                     section.style.display = 'none';
                 });
-                
-                // Mostrar la sección objetivo
-                document.getElementById(targetId).style.display = 'block';
-                
-                // Actualizar enlace activo
+
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.style.display = 'block';
+                }
+
                 menuLinks.forEach(l => l.classList.remove('menu__link--active'));
                 link.classList.add('menu__link--active');
-                
-                // Cerrar menú en dispositivos móviles
+
                 if (window.innerWidth <= 768) {
                     menu.classList.remove('menu--open');
                     hamburger.classList.remove('hamburger--open');
                 }
+
+                setTimeout(() => {
+                    window.dispatchEvent(new Event('resize'));
+                }, 100);
             });
         });
 
-        // Simulación de Memoria Virtual
-        const virtualMemoryViz = document.getElementById('virtual-memory-viz');
-        const startVirtualBtn = document.getElementById('start-virtual');
-        const resetVirtualBtn = document.getElementById('reset-virtual');
-        const stepVirtualBtn = document.getElementById('step-virtual');
-
-        function initVirtualMemoryVisualization() {
-            virtualMemoryViz.innerHTML = '';
-            
-            // Crear contenedor para memoria física
-            const physicalContainer = document.createElement('div');
-            physicalContainer.className = 'memory-visualization__section';
-            physicalContainer.innerHTML = '<div class="memory-visualization__title">Memoria Física (4 marcos)</div>';
-            
-            const physicalMemory = document.createElement('div');
-            physicalMemory.style.display = 'flex';
-            physicalMemory.style.flexWrap = 'wrap';
-            physicalMemory.style.justifyContent = 'center';
-            
-            for (let i = 0; i < 4; i++) {
-                const block = document.createElement('div');
-                block.className = 'memory-block memory-block--physical';
-                block.textContent = `M${i}`;
-                block.id = `physical-${i}`;
-                physicalMemory.appendChild(block);
-            }
-            
-            physicalContainer.appendChild(physicalMemory);
-            virtualMemoryViz.appendChild(physicalContainer);
-            
-            // Crear contenedor para memoria virtual
-            const virtualContainer = document.createElement('div');
-            virtualContainer.className = 'memory-visualization__section';
-            virtualContainer.innerHTML = '<div class="memory-visualization__title">Memoria Virtual (8 páginas)</div>';
-            
-            const virtualMemory = document.createElement('div');
-            virtualMemory.style.display = 'flex';
-            virtualMemory.style.flexWrap = 'wrap';
-            virtualMemory.style.justifyContent = 'center';
-            
-            for (let i = 0; i < 8; i++) {
-                const block = document.createElement('div');
-                block.className = 'memory-block memory-block--virtual';
-                block.textContent = `V${i}`;
-                block.id = `virtual-${i}`;
-                virtualMemory.appendChild(block);
-            }
-            
-            virtualContainer.appendChild(virtualMemory);
-            virtualMemoryViz.appendChild(virtualContainer);
-            
-            // Crear contenedor para disco
-            const diskContainer = document.createElement('div');
-            diskContainer.className = 'memory-visualization__section';
-            diskContainer.innerHTML = '<div class="memory-visualization__title">Disco (Almacenamiento Secundario)</div>';
-            
-            const disk = document.createElement('div');
-            disk.style.display = 'flex';
-            disk.style.flexWrap = 'wrap';
-            disk.style.justifyContent = 'center';
-            
-            for (let i = 0; i < 8; i++) {
-                const block = document.createElement('div');
-                block.className = 'memory-block memory-block--disk';
-                block.textContent = `P${i}`;
-                block.id = `disk-${i}`;
-                disk.appendChild(block);
-            }
-            
-            diskContainer.appendChild(disk);
-            virtualMemoryViz.appendChild(diskContainer);
-        }
-
-        function createArrow(fromId, toId, color) {
-            const fromElement = document.getElementById(fromId);
-            const toElement = document.getElementById(toId);
-            
-            if (!fromElement || !toElement) return null;
-            
-            const fromRect = fromElement.getBoundingClientRect();
-            const toRect = toElement.getBoundingClientRect();
-            const containerRect = virtualMemoryViz.getBoundingClientRect();
-            
-            const arrow = document.createElement('div');
-            arrow.className = 'arrow arrow--animated';
-            arrow.style.backgroundColor = color || '#e74c3c';
-            
-            // Calcular posición y rotación
-            const fromX = fromRect.left + fromRect.width/2 - containerRect.left;
-            const fromY = fromRect.top + fromRect.height/2 - containerRect.top;
-            const toX = toRect.left + toRect.width/2 - containerRect.left;
-            const toY = toRect.top + toRect.height/2 - containerRect.top;
-            
-            const length = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
-            const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
-            
-            arrow.style.width = `${length}px`;
-            arrow.style.left = `${fromX}px`;
-            arrow.style.top = `${fromY}px`;
-            arrow.style.transform = `rotate(${angle}deg)`;
-            arrow.style.transformOrigin = '0 0';
-            
-            virtualMemoryViz.appendChild(arrow);
-            return arrow;
-        }
-
-        function simulateVirtualMemory() {
-            // Limpiar flechas anteriores
-            document.querySelectorAll('.arrow').forEach(arrow => arrow.remove());
-            
-            // Simular acceso a páginas virtuales
-            const accessOrder = [0, 1, 2, 3, 4, 5, 0, 1, 6, 7, 2, 3];
-            let step = 0;
-            
-            const interval = setInterval(() => {
-                if (step >= accessOrder.length) {
-                    clearInterval(interval);
+        // ========== CLASE BASE THREE.JS ==========
+        class ThreeScene {
+            constructor(containerId) {
+                this.container = document.getElementById(containerId);
+                if (!this.container) {
+                    console.error(`Contenedor ${containerId} no encontrado`);
                     return;
                 }
-                
-                const page = accessOrder[step];
-                const virtualBlock = document.getElementById(`virtual-${page}`);
-                const diskBlock = document.getElementById(`disk-${page}`);
-                
-                // Resaltar la página virtual accedida
-                virtualBlock.classList.add('memory-block--active');
-                diskBlock.classList.add('memory-block--active');
-                
-                // Buscar un marco físico disponible
-                let physicalFrame = -1;
-                for (let i = 0; i < 4; i++) {
-                    const physicalBlock = document.getElementById(`physical-${i}`);
-                    if (!physicalBlock.classList.contains('memory-block--mapped')) {
-                        physicalFrame = i;
-                        break;
+
+                this.scene = new THREE.Scene();
+                this.camera = new THREE.PerspectiveCamera(75, this.container.clientWidth / this.container.clientHeight, 0.1, 1000);
+                this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+                this.setupRenderer();
+                this.setupCamera();
+                this.setupLights();
+                this.setupControls();
+
+                window.addEventListener('resize', () => this.onWindowResize());
+            }
+
+            setupRenderer() {
+                this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+                this.renderer.setClearColor(0x000000, 0);
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.container.appendChild(this.renderer.domElement);
+            }
+
+            setupCamera() {
+                this.camera.position.set(0, 5, 10);
+                this.camera.lookAt(0, 0, 0);
+            }
+
+            setupLights() {
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                this.scene.add(ambientLight);
+
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                directionalLight.position.set(10, 20, 5);
+                directionalLight.castShadow = true;
+                this.scene.add(directionalLight);
+            }
+
+            setupControls() {
+                this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+                this.controls.enableDamping = true;
+                this.controls.dampingFactor = 0.05;
+            }
+
+            onWindowResize() {
+                if (!this.container) return;
+                this.camera.aspect = this.container.clientWidth / this.container.clientHeight;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(this.container.clientWidth, this.container.clientHeight);
+            }
+
+            animate() {
+                if (!this.renderer) return;
+                requestAnimationFrame(() => this.animate());
+                if (this.controls) this.controls.update();
+                this.renderer.render(this.scene, this.camera);
+            }
+        }
+
+        // ========== MEMORIA VIRTUAL ==========
+        class VirtualMemoryScene extends ThreeScene {
+            constructor(containerId) {
+                super(containerId);
+                if (this.container) {
+                    this.createScene();
+                    this.animate();
+                }
+            }
+
+            createScene() {
+                // Limpiar escena
+                while (this.scene.children.length > 0) {
+                    this.scene.remove(this.scene.children[0]);
+                }
+                this.setupLights();
+
+                // Crear componentes
+                this.physicalMemory = this.createMemoryBlock(4, 0x3498db, -6, 0, "FÍSICA");
+                this.virtualMemory = this.createMemoryBlock(8, 0xe74c3c, 0, 0, "VIRTUAL");
+                this.diskStorage = this.createMemoryBlock(8, 0xf39c12, 6, 0, "DISCO");
+
+                // Estado interno
+                this.physicalFrames = Array(4).fill(null);
+                this.pageTable = {};
+                this.accessSequence = [0, 1, 2, 3, 4, 5, 0, 1, 6, 7, 2, 3];
+            }
+
+            createMemoryBlock(count, color, x, y, label) {
+                const group = new THREE.Group();
+                group.position.set(x, y, 0);
+
+                for (let i = 0; i < count; i++) {
+                    const geometry = new THREE.BoxGeometry(1, 1, 0.5);
+                    const material = new THREE.MeshPhongMaterial({
+                        color: color,
+                        transparent: true,
+                        opacity: 0.8
+                    });
+
+                    const block = new THREE.Mesh(geometry, material);
+                    block.position.set(0, (count / 2 - i - 0.5) * 1.2, 0);
+                    block.userData = { type: label, index: i };
+
+                    // Etiqueta
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    canvas.width = 128;
+                    canvas.height = 64;
+
+                    context.fillStyle = '#ffffff';
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+                    context.fillStyle = '#000000';
+                    context.font = '20px Arial';
+                    context.textAlign = 'center';
+                    context.fillText(`${label.charAt(0)}${i}`, canvas.width / 2, canvas.height / 2 + 8);
+
+                    const texture = new THREE.CanvasTexture(canvas);
+                    const labelMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+                    const labelGeometry = new THREE.PlaneGeometry(0.8, 0.4);
+                    const labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
+                    labelMesh.position.set(0, (count / 2 - i - 0.5) * 1.2, 0.26);
+
+                    group.add(block);
+                    group.add(labelMesh);
+                }
+
+                // Título
+                const titleGeometry = new THREE.PlaneGeometry(2.5, 0.4);
+                const titleMaterial = new THREE.MeshBasicMaterial({ color: 0x333333, side: THREE.DoubleSide });
+                const titleMesh = new THREE.Mesh(titleGeometry, titleMaterial);
+                titleMesh.position.set(0, count / 2 * 1.2 + 1, 0);
+                group.add(titleMesh);
+
+                this.scene.add(group);
+                return group;
+            }
+
+            executeStep(step) {
+                const page = this.accessSequence[step];
+                const explanation = document.getElementById('explanation-virtual-3d');
+
+                // Limpiar flechas anteriores
+                this.scene.children.filter(child => child instanceof THREE.ArrowHelper)
+                    .forEach(arrow => this.scene.remove(arrow));
+
+                // Verificar si la página está en memoria física
+                let frameIndex = this.physicalFrames.indexOf(page);
+
+                if (frameIndex === -1) {
+                    // PAGE FAULT - La página no está en memoria
+                    simulationState.virtualMemory.pageFaults++;
+                    if (explanation) {
+                        explanation.innerHTML = `
+                            <div class="explanation-title">❌ PAGE FAULT - Paso ${step + 1}</div>
+                            <p>La página <strong>V${page}</strong> no está en memoria física. Se debe cargar desde el disco.</p>
+                        `;
+                    }
+
+                    // Buscar marco disponible
+                    frameIndex = this.findAvailableFrame();
+
+                    if (frameIndex === -1) {
+                        // No hay marcos disponibles - reemplazo necesario
+                        frameIndex = this.selectFrameForReplacement(step);
+                        const replacedPage = this.physicalFrames[frameIndex];
+
+                        if (explanation) {
+                            explanation.innerHTML += `<p>No hay marcos disponibles. Reemplazando página <strong>V${replacedPage}</strong> usando algoritmo ${simulationState.virtualMemory.algorithm}.</p>`;
+                        }
+
+                        // Animación de swap out
+                        this.createArrow(
+                            this.physicalMemory.children[frameIndex * 2].position.clone().add(this.physicalMemory.position),
+                            this.diskStorage.children[replacedPage * 2].position.clone().add(this.diskStorage.position),
+                            0xf39c12
+                        );
+
+                        // Actualizar estado
+                        this.physicalFrames[frameIndex] = page;
+                        this.updateBlockAppearance(frameIndex, page, true);
+                    } else {
+                        // Marco disponible encontrado
+                        this.physicalFrames[frameIndex] = page;
+                        this.updateBlockAppearance(frameIndex, page, false);
+                    }
+
+                    // Animación de swap in
+                    this.createArrow(
+                        this.diskStorage.children[page * 2].position.clone().add(this.diskStorage.position),
+                        this.physicalMemory.children[frameIndex * 2].position.clone().add(this.physicalMemory.position),
+                        0x2ecc71
+                    );
+                } else {
+                    // Página encontrada en memoria
+                    if (explanation) {
+                        explanation.innerHTML = `
+                            <div class="explanation-title">✅ ACCESO EXITOSO - Paso ${step + 1}</div>
+                            <p>La página <strong>V${page}</strong> está en el marco físico <strong>M${frameIndex}</strong>. Acceso directo a memoria.</p>
+                        `;
+                    }
+
+                    // Resaltar acceso
+                    this.highlightAccess(frameIndex, page);
+                }
+
+                // Actualizar estadísticas
+                simulationState.virtualMemory.memoryUsage = this.physicalFrames.filter(x => x !== null).length;
+                this.updateStatistics(step);
+            }
+
+            findAvailableFrame() {
+                return this.physicalFrames.findIndex(frame => frame === null);
+            }
+
+            selectFrameForReplacement(step) {
+                const algorithm = simulationState.virtualMemory.algorithm;
+
+                switch (algorithm) {
+                    case 'fifo':
+                        return step % 4; // Simplemente circular
+                    case 'lru':
+                        // Simulación simple de LRU - reemplazar la menos usada recientemente
+                        return Math.floor(Math.random() * 4);
+                    case 'optimal':
+                        // Simulación simple de óptimo
+                        return Math.floor(Math.random() * 4);
+                    default:
+                        return 0;
+                }
+            }
+
+            updateBlockAppearance(frameIndex, page, isReplacement) {
+                const block = this.physicalMemory.children[frameIndex * 2];
+                const label = this.physicalMemory.children[frameIndex * 2 + 1];
+
+                // Cambiar color
+                block.material.color.setHex(isReplacement ? 0xe74c3c : 0x2ecc71);
+
+                // Actualizar etiqueta
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = 128;
+                canvas.height = 64;
+
+                context.fillStyle = '#ffffff';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                context.fillStyle = '#000000';
+                context.font = '20px Arial';
+                context.textAlign = 'center';
+                context.fillText(`V${page}`, canvas.width / 2, canvas.height / 2 + 8);
+
+                const texture = new THREE.CanvasTexture(canvas);
+                label.material.map = texture;
+                label.material.needsUpdate = true;
+            }
+
+            highlightAccess(frameIndex, page) {
+                const block = this.physicalMemory.children[frameIndex * 2];
+                const originalColor = block.material.color.getHex();
+
+                // Animación de resaltado
+                block.material.color.setHex(0x3498db);
+                setTimeout(() => {
+                    block.material.color.setHex(originalColor);
+                }, 500);
+            }
+
+            createArrow(from, to, color) {
+                const direction = new THREE.Vector3().subVectors(to, from);
+                const length = direction.length();
+                const arrow = new THREE.ArrowHelper(
+                    direction.normalize(),
+                    from,
+                    length,
+                    color,
+                    0.3,
+                    0.15
+                );
+                this.scene.add(arrow);
+
+                setTimeout(() => {
+                    this.scene.remove(arrow);
+                }, simulationState.virtualMemory.speed - 300);
+            }
+
+            updateStatistics(step) {
+                const info = document.getElementById('step-info-virtual-3d');
+                if (info) {
+                    info.innerHTML = `
+                        <strong>Paso actual:</strong> ${step + 1}/${simulationState.virtualMemory.totalSteps}<br>
+                        <strong>Accediendo a página:</strong> V${this.accessSequence[step]}<br>
+                        <strong>Page faults:</strong> ${simulationState.virtualMemory.pageFaults}<br>
+                        <strong>Páginas en memoria:</strong> ${simulationState.virtualMemory.memoryUsage}/4
+                    `;
+                }
+            }
+
+            reset() {
+                this.createScene();
+                simulationState.virtualMemory.pageFaults = 0;
+                simulationState.virtualMemory.memoryUsage = 0;
+            }
+        }
+
+        // ========== TABLA DE PÁGINAS ==========
+        class PageTableScene extends ThreeScene {
+            constructor(containerId) {
+                super(containerId);
+                if (this.container) {
+                    this.createScene();
+                    this.animate();
+                    this.initPageTable();
+                }
+            }
+
+            createScene() {
+                while (this.scene.children.length > 0) {
+                    this.scene.remove(this.scene.children[0]);
+                }
+                this.setupLights();
+
+                // Crear tabla de páginas 3D
+                this.create3DPageTable();
+            }
+
+            create3DPageTable() {
+                const tableGroup = new THREE.Group();
+
+                const entries = [
+                    { virtual: 0, physical: 2, present: true, modified: false, referenced: true, protection: 'RW' },
+                    { virtual: 1, physical: 0, present: true, modified: true, referenced: true, protection: 'RW' },
+                    { virtual: 2, physical: -1, present: false, modified: false, referenced: false, protection: 'R' },
+                    { virtual: 3, physical: 1, present: true, modified: false, referenced: true, protection: 'RX' },
+                    { virtual: 4, physical: -1, present: false, modified: false, referenced: false, protection: 'RW' },
+                    { virtual: 5, physical: 3, present: true, modified: false, referenced: false, protection: 'R' },
+                ];
+
+                entries.forEach((entry, i) => {
+                    const color = entry.present ? 0x3498db : 0xe74c3c;
+                    const geometry = new THREE.BoxGeometry(2.5, 0.4, 0.2);
+                    const material = new THREE.MeshPhongMaterial({ color });
+
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(0, 2 - i * 0.6, 0);
+                    mesh.userData = entry;
+
+                    tableGroup.add(mesh);
+                });
+
+                this.scene.add(tableGroup);
+            }
+
+            initPageTable() {
+                const tableBody = document.getElementById('page-table-body');
+                if (!tableBody) return;
+
+                tableBody.innerHTML = '';
+
+                const entries = [
+                    { virtual: 0, physical: 2, present: true, modified: false, referenced: true, protection: 'RW' },
+                    { virtual: 1, physical: 0, present: true, modified: true, referenced: true, protection: 'RW' },
+                    { virtual: 2, physical: -1, present: false, modified: false, referenced: false, protection: 'R' },
+                    { virtual: 3, physical: 1, present: true, modified: false, referenced: true, protection: 'RX' },
+                    { virtual: 4, physical: -1, present: false, modified: false, referenced: false, protection: 'RW' },
+                    { virtual: 5, physical: 3, present: true, modified: false, referenced: false, protection: 'R' },
+                ];
+
+                entries.forEach(entry => {
+                    const row = document.createElement('tr');
+                    row.id = `page-table-row-${entry.virtual}`;
+                    row.innerHTML = `
+                        <td>${entry.virtual}</td>
+                        <td>${entry.physical >= 0 ? entry.physical : '-'}</td>
+                        <td>${entry.present ? '✅' : '❌'}</td>
+                        <td>${entry.modified ? '✅' : '❌'}</td>
+                        <td>${entry.referenced ? '✅' : '❌'}</td>
+                        <td>${entry.protection}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            executeStep(step) {
+                const virtualAddress = this.generateVirtualAddress(step);
+                const pageNumber = virtualAddress >> 8; // Suponiendo páginas de 256 bytes
+                const offset = virtualAddress & 0xFF;
+
+                const explanation = document.getElementById('explanation-page-table-3d');
+                const info = document.getElementById('step-info-page-table-3d');
+
+                if (explanation) {
+                    explanation.innerHTML = `
+                        <div class="explanation-title">🔍 TRADUCCIÓN DE DIRECCIÓN - Paso ${step + 1}</div>
+                        <p>Dirección virtual: <strong>0x${virtualAddress.toString(16).padStart(4, '0')}</strong><br>
+                        Número de página: <strong>${pageNumber}</strong> | Desplazamiento: <strong>0x${offset.toString(16).padStart(2, '0')}</strong></p>
+                    `;
+                }
+
+                // Resaltar fila en la tabla
+                const tableBody = document.getElementById('page-table-body');
+                if (tableBody) {
+                    tableBody.querySelectorAll('tr').forEach(tr => {
+                        tr.style.backgroundColor = '';
+                    });
+                    const row = document.getElementById(`page-table-row-${pageNumber}`);
+                    if (row) row.style.backgroundColor = '#e3f2fd';
+                }
+
+                // Simular consulta a tabla de páginas
+                setTimeout(() => {
+                    const row = document.getElementById(`page-table-row-${pageNumber}`);
+                    const entry = row ? this.getEntryFromRow(row) : null;
+
+                    if (entry && entry.present) {
+                        const physicalAddress = (entry.physical << 8) | offset;
+                        if (explanation) {
+                            explanation.innerHTML += `
+                                <p>✅ Página <strong>${pageNumber}</strong> encontrada en marco <strong>${entry.physical}</strong><br>
+                                Dirección física: <strong>0x${physicalAddress.toString(16).padStart(4, '0')}</strong></p>
+                            `;
+                        }
+
+                        if (info) {
+                            info.innerHTML = `
+                                <strong>Paso actual:</strong> ${step + 1}/${simulationState.pageTable.totalSteps}<br>
+                                <strong>Dirección virtual:</strong> 0x${virtualAddress.toString(16).padStart(4, '0')}<br>
+                                <strong>Página:</strong> ${pageNumber} | <strong>Desplazamiento:</strong> 0x${offset.toString(16).padStart(2, '0')}<br>
+                                <strong>Dirección física:</strong> 0x${physicalAddress.toString(16).padStart(4, '0')}
+                            `;
+                        }
+                    } else {
+                        if (explanation) {
+                            explanation.innerHTML += `
+                                <p>❌ <strong>PAGE FAULT</strong> - La página ${pageNumber} no está en memoria<br>
+                                Se debe cargar desde el disco y actualizar la tabla de páginas</p>
+                            `;
+                        }
+
+                        if (info) {
+                            info.innerHTML = `
+                                <strong>Paso actual:</strong> ${step + 1}/${simulationState.pageTable.totalSteps}<br>
+                                <strong>Dirección virtual:</strong> 0x${virtualAddress.toString(16).padStart(4, '0')}<br>
+                                <strong>Página:</strong> ${pageNumber} | <strong>Desplazamiento:</strong> 0x${offset.toString(16).padStart(2, '0')}<br>
+                                <strong>Dirección física:</strong> PAGE FAULT
+                            `;
+                        }
+                    }
+                }, 1000);
+            }
+
+            generateVirtualAddress(step) {
+                // Generar direcciones virtuales realistas
+                const addresses = [0x0100, 0x0250, 0x0000, 0x0350, 0x0200, 0x0150, 0x0300, 0x0050];
+                return addresses[step % addresses.length];
+            }
+
+            getEntryFromRow(row) {
+                const cells = row.getElementsByTagName('td');
+                return {
+                    virtual: parseInt(cells[0].textContent),
+                    physical: cells[1].textContent === '-' ? -1 : parseInt(cells[1].textContent),
+                    present: cells[2].textContent === '✅',
+                    modified: cells[3].textContent === '✅',
+                    referenced: cells[4].textContent === '✅',
+                    protection: cells[5].textContent
+                };
+            }
+        }
+
+        // ========== COMPARACIÓN SEGMENTACIÓN vs PAGINACIÓN ==========
+        class ComparisonScene extends ThreeScene {
+            constructor(containerId) {
+                super(containerId);
+                if (this.container) {
+                    this.createScene();
+                    this.animate();
+                }
+            }
+
+            createScene() {
+                while (this.scene.children.length > 0) {
+                    this.scene.remove(this.scene.children[0]);
+                }
+                this.setupLights();
+
+                this.showComparison();
+            }
+
+            showComparison() {
+                // Segmentación (izquierda)
+                this.createSegmentation(-4, 0);
+                // Paginación (derecha)
+                this.createPagination(4, 0);
+            }
+
+            createSegmentation(x, y) {
+                const group = new THREE.Group();
+                group.position.set(x, y, 0);
+
+                // Segmentos de diferentes tamaños (simulando fragmentación)
+                const segments = [
+                    { size: 2.5, color: 0x3498db, y: 3, label: "CÓDIGO" },
+                    { size: 1.2, color: 0x2ecc71, y: 0.5, label: "DATOS" },
+                    { size: 1.8, color: 0xe74c3c, y: -1.8, label: "PILA" },
+                    { size: 0.8, color: 0x9b59b6, y: -3.5, label: "HEAP" },
+                ];
+
+                segments.forEach(segment => {
+                    const geometry = new THREE.BoxGeometry(2, segment.size, 0.5);
+                    const material = new THREE.MeshPhongMaterial({ color: segment.color });
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(0, segment.y, 0);
+                    group.add(mesh);
+                });
+
+                // Espacios vacíos (fragmentación externa)
+                const gaps = [
+                    { size: 0.5, y: 1.8 },
+                    { size: 0.3, y: -0.8 }
+                ];
+
+                gaps.forEach(gap => {
+                    const geometry = new THREE.BoxGeometry(2, gap.size, 0.3);
+                    const material = new THREE.MeshPhongMaterial({
+                        color: 0xcccccc,
+                        transparent: true,
+                        opacity: 0.5
+                    });
+                    const mesh = new THREE.Mesh(geometry, material);
+                    mesh.position.set(0, gap.y, 0);
+                    group.add(mesh);
+                });
+
+                this.scene.add(group);
+            }
+
+            createPagination(x, y) {
+                const group = new THREE.Group();
+                group.position.set(x, y, 0);
+
+                // Páginas de tamaño uniforme
+                for (let row = 0; row < 4; row++) {
+                    for (let col = 0; col < 2; col++) {
+                        const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.5);
+                        const material = new THREE.MeshPhongMaterial({
+                            color: 0x3498db,
+                            transparent: true,
+                            opacity: 0.8
+                        });
+                        const mesh = new THREE.Mesh(geometry, material);
+                        mesh.position.set(
+                            (col - 0.5) * 1.2,
+                            (1.5 - row) * 1.2,
+                            0
+                        );
+                        group.add(mesh);
                     }
                 }
-                
-                // Si no hay marco disponible, simular reemplazo (FIFO)
-                if (physicalFrame === -1) {
-                    // En una simulación real, aquí se implementaría un algoritmo de reemplazo
-                    physicalFrame = step % 4;
-                    const oldPhysicalBlock = document.getElementById(`physical-${physicalFrame}`);
-                    oldPhysicalBlock.classList.remove('memory-block--mapped');
-                    oldPhysicalBlock.textContent = `M${physicalFrame}`;
-                    
-                    // Crear flecha desde memoria física a disco (swap out)
-                    createArrow(`physical-${physicalFrame}`, `disk-${accessOrder[step-4]}`, '#f39c12');
+
+                // Mostrar fragmentación interna en algunas páginas
+                const internalFragmentationPages = [2, 5, 7];
+                internalFragmentationPages.forEach(pageIndex => {
+                    const page = group.children[pageIndex];
+                    const usedGeometry = new THREE.BoxGeometry(0.8, 0.4, 0.3);
+                    const usedMaterial = new THREE.MeshPhongMaterial({ color: 0x2ecc71 });
+                    const usedMesh = new THREE.Mesh(usedGeometry, usedMaterial);
+                    usedMesh.position.set(0, -0.2, 0.1);
+                    page.add(usedMesh);
+                });
+
+                this.scene.add(group);
+            }
+
+            executeStep(step) {
+                const explanation = document.getElementById('explanation-comparison-3d');
+                const info = document.getElementById('step-info-comparison-3d');
+
+                const steps = [
+                    "Mostrando estructura básica de ambos sistemas",
+                    "Observa la fragmentación externa en segmentación",
+                    "En segmentación, los espacios entre segmentos no son utilizables",
+                    "En paginación, todas las páginas tienen el mismo tamaño",
+                    "La fragmentación interna ocurre cuando una página no se usa completamente",
+                    "Segmentación: mejor para organización lógica",
+                    "Paginación: más eficiente para gestión de memoria",
+                    "Segmentación: protección por segmento",
+                    "Paginación: transparente al programador",
+                    "Sistemas modernos usan enfoques híbridos"
+                ];
+
+                if (explanation) {
+                    explanation.innerHTML = `
+                        <div class="explanation-title">📊 COMPARACIÓN - Paso ${step + 1}</div>
+                        <p>${steps[step]}</p>
+                    `;
                 }
-                
-                // Crear flecha desde disco a memoria física (swap in)
-                createArrow(`disk-${page}`, `physical-${physicalFrame}`, '#2ecc71');
-                
-                // Mapear la página virtual al marco físico
-                const physicalBlock = document.getElementById(`physical-${physicalFrame}`);
-                physicalBlock.classList.add('memory-block--mapped');
-                physicalBlock.textContent = `V${page}`;
-                
-                // Quitar resaltado después de un tiempo
-                setTimeout(() => {
-                    virtualBlock.classList.remove('memory-block--active');
-                    diskBlock.classList.remove('memory-block--active');
-                    
-                    // Limpiar flechas después de un tiempo
-                    document.querySelectorAll('.arrow').forEach(arrow => {
-                        if (arrow.parentNode) arrow.parentNode.removeChild(arrow);
-                    });
-                }, 1000);
-                
-                step++;
-            }, 1500);
+
+                // Calcular métricas
+                const externalFragmentation = Math.min(100, step * 15);
+                const internalFragmentation = Math.min(30, step * 5);
+
+                if (info) {
+                    info.innerHTML = `
+                        <strong>Paso actual:</strong> ${step + 1}/${simulationState.comparison.totalSteps}<br>
+                        <strong>Modo:</strong> Comparación<br>
+                        <strong>Fragmentación externa (Segmentación):</strong> ${externalFragmentation}%<br>
+                        <strong>Fragmentación interna (Paginación):</strong> ${internalFragmentation}%
+                    `;
+                }
+            }
+
+            showOnlySegmentation() {
+                while (this.scene.children.length > 0) {
+                    this.scene.remove(this.scene.children[0]);
+                }
+                this.setupLights();
+                this.createSegmentation(0, 0);
+            }
+
+            showOnlyPagination() {
+                while (this.scene.children.length > 0) {
+                    this.scene.remove(this.scene.children[0]);
+                }
+                this.setupLights();
+                this.createPagination(0, 0);
+            }
         }
 
-        startVirtualBtn.addEventListener('click', simulateVirtualMemory);
-        resetVirtualBtn.addEventListener('click', initVirtualMemoryVisualization);
-        stepVirtualBtn.addEventListener('click', () => {
-            // Implementación simplificada del modo paso a paso
-            alert('Modo paso a paso: En una implementación completa, esto permitiría avanzar manualmente por cada paso de la simulación.');
-        });
+        // ========== SEGMENTACIÓN PAGINADA ==========
+        class HybridScene extends ThreeScene {
+            constructor(containerId) {
+                super(containerId);
+                if (this.container) {
+                    this.createScene();
+                    this.animate();
+                }
+            }
 
-        // Inicializar visualizaciones
-        initVirtualMemoryVisualization();
+            createScene() {
+                while (this.scene.children.length > 0) {
+                    this.scene.remove(this.scene.children[0]);
+                }
+                this.setupLights();
 
-        // Simulación de Tabla de Páginas
-        const pageTableBody = document.getElementById('page-table-body');
-        const accessMemoryBtn = document.getElementById('access-memory');
-        const causePageFaultBtn = document.getElementById('cause-page-fault');
-        const showTranslationBtn = document.getElementById('show-translation');
-        
-        function initPageTable() {
-            pageTableBody.innerHTML = '';
-            
-            // Crear entradas de tabla de páginas
-            const pageTableData = [
-                { virtual: 0, physical: 2, present: 1, modified: 0, protection: 'RW' },
-                { virtual: 1, physical: 0, present: 1, modified: 1, protection: 'RW' },
-                { virtual: 2, physical: -1, present: 0, modified: 0, protection: 'R' },
-                { virtual: 3, physical: 1, present: 1, modified: 0, protection: 'RX' },
-                { virtual: 4, physical: -1, present: 0, modified: 0, protection: 'RW' },
-                { virtual: 5, physical: 3, present: 1, modified: 0, protection: 'R' },
-            ];
-            
-            pageTableData.forEach(entry => {
-                const row = document.createElement('tr');
-                row.id = `page-table-row-${entry.virtual}`;
-                
-                row.innerHTML = `
-                    <td>${entry.virtual}</td>
-                    <td>${entry.physical >= 0 ? entry.physical : '-'}</td>
-                    <td>${entry.present ? 'Sí' : 'No'}</td>
-                    <td>${entry.modified ? 'Sí' : 'No'}</td>
-                    <td>${entry.protection}</td>
-                `;
-                
-                pageTableBody.appendChild(row);
+                this.createHybridModel();
+            }
+
+            createHybridModel() {
+                const mainGroup = new THREE.Group();
+
+                // Segmentos lógicos
+                const segments = [
+                    { name: "CÓDIGO", pages: 4, color: 0x3498db, x: -5 },
+                    { name: "DATOS", pages: 3, color: 0x2ecc71, x: -1.5 },
+                    { name: "PILA", pages: 2, color: 0xe74c3c, x: 2 },
+                    { name: "HEAP", pages: 3, color: 0x9b59b6, x: 5.5 },
+                ];
+
+                segments.forEach(segment => {
+                    const segmentGroup = new THREE.Group();
+                    segmentGroup.position.set(segment.x, 0, 0);
+
+                    // Crear segmento lógico
+                    const segmentGeometry = new THREE.BoxGeometry(1.2, segment.pages * 0.8, 0.3);
+                    const segmentMaterial = new THREE.MeshPhongMaterial({
+                        color: segment.color,
+                        transparent: true,
+                        opacity: 0.7
+                    });
+                    const segmentMesh = new THREE.Mesh(segmentGeometry, segmentMaterial);
+                    segmentGroup.add(segmentMesh);
+
+                    // Crear páginas dentro del segmento
+                    for (let i = 0; i < segment.pages; i++) {
+                        const pageGeometry = new THREE.BoxGeometry(1, 0.6, 0.2);
+                        const pageMaterial = new THREE.MeshPhongMaterial({
+                            color: segment.color,
+                            transparent: true,
+                            opacity: 0.9
+                        });
+                        const pageMesh = new THREE.Mesh(pageGeometry, pageMaterial);
+                        pageMesh.position.set(0, (segment.pages / 2 - i - 0.5) * 0.8, 0.2);
+                        segmentGroup.add(pageMesh);
+                    }
+
+                    mainGroup.add(segmentGroup);
+                });
+
+                // Memoria física (derecha)
+                const physicalMemoryGroup = new THREE.Group();
+                physicalMemoryGroup.position.set(0, -3, 0);
+
+                // Marcos de página en memoria física
+                for (let i = 0; i < 8; i++) {
+                    const frameGeometry = new THREE.BoxGeometry(0.8, 0.6, 0.3);
+                    const frameMaterial = new THREE.MeshPhongMaterial({
+                        color: 0xf39c12,
+                        transparent: true,
+                        opacity: 0.8
+                    });
+                    const frameMesh = new THREE.Mesh(frameGeometry, frameMaterial);
+                    frameMesh.position.set(
+                        (i % 4 - 1.5) * 1.2,
+                        Math.floor(i / 4) * 1.2,
+                        0
+                    );
+                    physicalMemoryGroup.add(frameMesh);
+                }
+
+                mainGroup.add(physicalMemoryGroup);
+                this.scene.add(mainGroup);
+            }
+
+            executeStep(step) {
+                const explanation = document.getElementById('explanation-hybrid-3d');
+                const info = document.getElementById('step-info-hybrid-3d');
+
+                const steps = [
+                    "Estructura del proceso con segmentación paginada",
+                    "Cada segmento lógico se divide en páginas de tamaño fijo",
+                    "Las páginas de diferentes segmentos se mezclan en memoria física",
+                    "Tabla de segmentos apunta a tablas de páginas por segmento",
+                    "Protección a nivel de segmento, gestión a nivel de página",
+                    "Combina ventajas de ambos sistemas"
+                ];
+
+                const activeSegments = Math.min(4, step + 1);
+                const pagesAssigned = Math.min(12, step * 2);
+
+                if (explanation) {
+                    explanation.innerHTML = `
+                        <div class="explanation-title">🔄 MODELO HÍBRIDO - Paso ${step + 1}</div>
+                        <p>${steps[step]}</p>
+                    `;
+                }
+
+                if (info) {
+                    info.innerHTML = `
+                        <strong>Paso actual:</strong> ${step + 1}/${simulationState.hybrid.totalSteps}<br>
+                        <strong>Mostrando:</strong> ${steps[step].substring(0, 30)}...<br>
+                        <strong>Segmentos activos:</strong> ${activeSegments}/4<br>
+                        <strong>Páginas asignadas:</strong> ${pagesAssigned}
+                    `;
+                }
+            }
+        }
+
+        // ========== INICIALIZACIÓN Y CONTROL ==========
+        let virtualMemoryScene, pageTableScene, comparisonScene, hybridScene;
+
+        function initializeScenes() {
+            try {
+                virtualMemoryScene = new VirtualMemoryScene('virtual-memory-3d');
+                pageTableScene = new PageTableScene('page-table-3d');
+                comparisonScene = new ComparisonScene('comparison-3d');
+                hybridScene = new HybridScene('hybrid-3d');
+
+                setupVirtualMemoryControls();
+                setupPageTableControls();
+                setupComparisonControls();
+                setupHybridControls();
+
+                console.log('Escenas Three.js inicializadas correctamente');
+            } catch (error) {
+                console.error('Error al inicializar las escenas Three.js:', error);
+            }
+        }
+
+        function setupVirtualMemoryControls() {
+            const startBtn = document.getElementById('start-virtual-3d');
+            const pauseBtn = document.getElementById('pause-virtual-3d');
+            const resetBtn = document.getElementById('reset-virtual-3d');
+            const stepBtn = document.getElementById('step-virtual-3d');
+            const speedInput = document.getElementById('speed-virtual-3d');
+
+            if (startBtn) {
+                startBtn.addEventListener('click', () => {
+                    if (!simulationState.virtualMemory.running) {
+                        startSimulation('virtualMemory', () => {
+                            if (virtualMemoryScene) {
+                                virtualMemoryScene.executeStep(simulationState.virtualMemory.currentStep);
+                            }
+                        });
+                    } else if (simulationState.virtualMemory.paused) {
+                        resumeSimulation('virtualMemory');
+                    }
+                });
+            }
+
+            if (pauseBtn) {
+                pauseBtn.addEventListener('click', () => {
+                    pauseSimulation('virtualMemory');
+                });
+            }
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    stopSimulation('virtualMemory');
+                    if (virtualMemoryScene) {
+                        virtualMemoryScene.reset();
+                    }
+                });
+            }
+
+            if (stepBtn) {
+                stepBtn.addEventListener('click', () => {
+                    if (simulationState.virtualMemory.currentStep < simulationState.virtualMemory.totalSteps) {
+                        if (virtualMemoryScene) {
+                            virtualMemoryScene.executeStep(simulationState.virtualMemory.currentStep);
+                        }
+                        simulationState.virtualMemory.currentStep++;
+                        updateStatus('virtualMemory');
+                    }
+                });
+            }
+
+            if (speedInput) {
+                speedInput.addEventListener('change', function () {
+                    simulationState.virtualMemory.speed = parseInt(this.value);
+                    updateInterval('virtualMemory');
+                });
+            }
+        }
+
+        function setupPageTableControls() {
+            const startBtn = document.getElementById('start-page-table-3d');
+            const pauseBtn = document.getElementById('pause-page-table-3d');
+            const resetBtn = document.getElementById('reset-page-table-3d');
+            const stepBtn = document.getElementById('step-page-table-3d');
+
+            if (startBtn) {
+                startBtn.addEventListener('click', () => {
+                    if (!simulationState.pageTable.running) {
+                        startSimulation('pageTable', () => {
+                            if (pageTableScene) {
+                                pageTableScene.executeStep(simulationState.pageTable.currentStep);
+                            }
+                        });
+                    } else if (simulationState.pageTable.paused) {
+                        resumeSimulation('pageTable');
+                    }
+                });
+            }
+
+            if (pauseBtn) {
+                pauseBtn.addEventListener('click', () => {
+                    pauseSimulation('pageTable');
+                });
+            }
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    stopSimulation('pageTable');
+                    if (pageTableScene) {
+                        pageTableScene.initPageTable();
+                    }
+                });
+            }
+
+            if (stepBtn) {
+                stepBtn.addEventListener('click', () => {
+                    if (simulationState.pageTable.currentStep < simulationState.pageTable.totalSteps) {
+                        if (pageTableScene) {
+                            pageTableScene.executeStep(simulationState.pageTable.currentStep);
+                        }
+                        simulationState.pageTable.currentStep++;
+                        updateStatus('pageTable');
+                    }
+                });
+            }
+        }
+
+        function setupComparisonControls() {
+            const startBtn = document.getElementById('start-comparison-3d');
+            const segBtn = document.getElementById('show-segmentation-3d');
+            const pagBtn = document.getElementById('show-pagination-3d');
+            const pauseBtn = document.getElementById('pause-comparison-3d');
+            const resetBtn = document.getElementById('reset-comparison-3d');
+
+            if (startBtn) {
+                startBtn.addEventListener('click', () => {
+                    if (!simulationState.comparison.running) {
+                        startSimulation('comparison', () => {
+                            if (comparisonScene) {
+                                comparisonScene.executeStep(simulationState.comparison.currentStep);
+                            }
+                        });
+                    } else if (simulationState.comparison.paused) {
+                        resumeSimulation('comparison');
+                    }
+                });
+            }
+
+            if (segBtn) {
+                segBtn.addEventListener('click', () => {
+                    if (comparisonScene) {
+                        comparisonScene.showOnlySegmentation();
+                    }
+                });
+            }
+
+            if (pagBtn) {
+                pagBtn.addEventListener('click', () => {
+                    if (comparisonScene) {
+                        comparisonScene.showOnlyPagination();
+                    }
+                });
+            }
+
+            if (pauseBtn) {
+                pauseBtn.addEventListener('click', () => {
+                    pauseSimulation('comparison');
+                });
+            }
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    stopSimulation('comparison');
+                    if (comparisonScene) {
+                        comparisonScene.showComparison();
+                    }
+                });
+            }
+        }
+
+        function setupHybridControls() {
+            const startBtn = document.getElementById('start-hybrid-3d');
+            const pauseBtn = document.getElementById('pause-hybrid-3d');
+            const resetBtn = document.getElementById('reset-hybrid-3d');
+            const stepBtn = document.getElementById('step-hybrid-3d');
+
+            if (startBtn) {
+                startBtn.addEventListener('click', () => {
+                    if (!simulationState.hybrid.running) {
+                        startSimulation('hybrid', () => {
+                            if (hybridScene) {
+                                hybridScene.executeStep(simulationState.hybrid.currentStep);
+                            }
+                        });
+                    } else if (simulationState.hybrid.paused) {
+                        resumeSimulation('hybrid');
+                    }
+                });
+            }
+
+            if (pauseBtn) {
+                pauseBtn.addEventListener('click', () => {
+                    pauseSimulation('hybrid');
+                });
+            }
+
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    stopSimulation('hybrid');
+                    if (hybridScene) {
+                        hybridScene.createScene();
+                    }
+                });
+            }
+
+            if (stepBtn) {
+                stepBtn.addEventListener('click', () => {
+                    if (simulationState.hybrid.currentStep < simulationState.hybrid.totalSteps) {
+                        if (hybridScene) {
+                            hybridScene.executeStep(simulationState.hybrid.currentStep);
+                        }
+                        simulationState.hybrid.currentStep++;
+                        updateStatus('hybrid');
+                    }
+                });
+            }
+        }
+
+        // Funciones auxiliares de control de simulación
+        function startSimulation(type, stepFunction) {
+            simulationState[type].running = true;
+            simulationState[type].paused = false;
+
+            updateStatus(type, 'running');
+
+            simulationState[type].intervalId = setInterval(() => {
+                if (simulationState[type].currentStep >= simulationState[type].totalSteps) {
+                    stopSimulation(type);
+                    return;
+                }
+
+                stepFunction();
+                simulationState[type].currentStep++;
+            }, simulationState[type].speed);
+        }
+
+        function pauseSimulation(type) {
+            if (!simulationState[type].running || simulationState[type].paused) return;
+
+            simulationState[type].paused = true;
+            clearInterval(simulationState[type].intervalId);
+            updateStatus(type, 'paused');
+        }
+
+        function resumeSimulation(type) {
+            if (!simulationState[type].running || !simulationState[type].paused) return;
+
+            simulationState[type].paused = false;
+            startSimulation(type, () => {
+                // La función de paso se define en startSimulation
             });
         }
-        
-        accessMemoryBtn.addEventListener('click', () => {
-            // Simular acceso a memoria
-            const randomPage = Math.floor(Math.random() * 6);
-            const row = document.getElementById(`page-table-row-${randomPage}`);
-            
-            row.classList.add('highlight');
-            setTimeout(() => {
-                row.classList.remove('highlight');
-            }, 2000);
-        });
-        
-        causePageFaultBtn.addEventListener('click', () => {
-            // Simular page fault
-            const faultPages = [2, 4]; // Páginas que no están en memoria
-            const randomFaultPage = faultPages[Math.floor(Math.random() * faultPages.length)];
-            const row = document.getElementById(`page-table-row-${randomFaultPage}`);
-            
-            row.classList.add('memory-block--fault');
-            setTimeout(() => {
-                row.classList.remove('memory-block--fault');
-            }, 2000);
-        });
-        
-        showTranslationBtn.addEventListener('click', () => {
-            // Implementación simplificada de la traducción
-            alert('Proceso de traducción: En una implementación completa, esto mostraría visualmente cómo una dirección virtual se divide en número de página y desplazamiento, y cómo se traduce a una dirección física.');
-        });
-        
-        initPageTable();
 
-        // Inicializar otras visualizaciones (simplificadas por brevedad)
-        // En una implementación completa, se añadirían todas las visualizaciones
+        function stopSimulation(type) {
+            simulationState[type].running = false;
+            simulationState[type].paused = false;
+            simulationState[type].currentStep = 0;
+            clearInterval(simulationState[type].intervalId);
+            updateStatus(type, 'stopped');
+        }
+
+        function updateInterval(type) {
+            if (simulationState[type].running && !simulationState[type].paused) {
+                clearInterval(simulationState[type].intervalId);
+                startSimulation(type, () => {
+                    // La función de paso específica se maneja en cada escena
+                });
+            }
+        }
+
+        function updateStatus(type, status) {
+            const statusElement = document.getElementById(`status-${type}-3d`);
+            if (!statusElement) {
+                console.warn(`Elemento status-${type}-3d no encontrado`);
+                return;
+            }
+
+            const statusText = {
+                'running': 'Estado: Ejecutando',
+                'paused': 'Estado: Pausado',
+                'stopped': 'Estado: Detenido'
+            };
+
+            statusElement.textContent = statusText[status] || 'Estado: Detenido';
+            statusElement.className = `simulation-status simulation-status--${status}`;
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', initializeScenes);
     </script>
 </body>
+
 </html>
